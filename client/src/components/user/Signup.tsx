@@ -7,9 +7,16 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useRouter } from 'next/router';
+import { AuthContext } from '@/context/Context';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import {useContext,useState} from 'react'
 
-function Copyright(props: any) {
+
+
+function Copyright(props:any) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'By signing up, you agree to our terms and privacy policy. You must be at least 18 years old to start a page.'}
@@ -27,18 +34,84 @@ const theme = createTheme({
  });
 
 export default function SignUp() {
+
+  const { userDetails, setUserDetails }: any = useContext(AuthContext);
+  const router = useRouter()
+
+   const [email,setEmail] = useState(false)
+   const [emailErr,setEmailErr] = useState('')
+   const [password,setPassword] = useState(false)
+   const [passwordErr,setPasswordErr] = useState('')
+   const [required ,setRequired] = useState('')
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    let signupInfos = {
+    let userData = {
       email: data.get('email'),
       password: data.get('password'),
     }
-    axios.post('http://localhost:4000/signup',{signupInfos})
+
+    if(userData.email && userData.password){
+      let regEmail =/^[a-zA-Z0-9.!#$%&'+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)$/
+      setRequired('');
+      if(regEmail.test(userData.email.toString())){
+        setEmail(false)
+        setEmailErr('')
+        if(userData.password.length >= 8){
+          setPassword(false)
+          setEmailErr('')
+          setUserDetails(userData)
+
+          axios.post('http://localhost:3002/verify-auth',{userData}).then((response)=>{
+            if(response.data.status == "success"){
+
+              toast.success('Here we go..!', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+              setTimeout(()=>{
+                router.push('/complete-your-page')
+              },1500)
+
+            }else{
+              toast.error('Oops..,Somthing went wrong', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+            }
+            
+          })
+
+        }else{
+          setPassword(true)
+          setPasswordErr('Password must be at least 8 characters')
+        }
+      }else{
+        setEmail(true)
+        setEmailErr('Please enter valid email address')
+      }
+    }else{
+      setRequired('All feilds are required')
+    }
   };
-  
+
+
   return (
     <ThemeProvider theme={theme}>
+      <ToastContainer/>
       <Container component="main" maxWidth="xs">
         
         <CssBaseline />
@@ -64,6 +137,8 @@ export default function SignUp() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  error={email}
+                  helperText={emailErr}
                   sx={{
                     "& .MuiInputLabel-root.Mui-focused": {color: '#4f4e4e'},//styles the label
                     "& .MuiOutlinedInput-root.Mui-focused": {"& > fieldset": { borderColor: "#f22c50" }},
@@ -81,6 +156,8 @@ export default function SignUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  error={password}
+                  helperText={passwordErr}
                   sx={{
                     "& .MuiInputLabel-root.Mui-focused": {color: '#4f4e4e'},
                     "& .MuiOutlinedInput-root.Mui-focused": {"& > fieldset": {borderColor: "#f22c50"}},

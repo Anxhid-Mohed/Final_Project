@@ -7,7 +7,11 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import { useRouter } from 'next/router';
+import { AuthContext } from '@/context/Context';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import {useContext,useState} from 'react'
+import axios from 'axios';
 
 function Copyright(props: any) {
   return (
@@ -27,13 +31,77 @@ const theme = createTheme({
  });
 
 export default function CompletePage() {
+
+  const { userDetails, setUserDetails }:any = useContext(AuthContext);
+  const router = useRouter()
+
+  const [name,setName] = useState(false)
+  const [nameErr,setNameErr] = useState('')
+  const [userName,setUserName] = useState(false)
+  const [userNameErr,setUserNameErr] = useState('')
+  const [about,setAbout] = useState(false)
+  const [aboutErr,setAboutErr] = useState('')
+  const [social,setSocial] = useState(false)
+  const [socialErr,setSocailErr] = useState('')
+  const [required ,setRequired] = useState('')
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    let obj = {
+      name: data.get('name'),
+      username: data.get('username'),
+      about: data.get('about'),
+      social: data.get('social'),
+      ...userDetails
+    };
+    console.log(obj);
+    const {name,username,about,social} = obj
+    if(name && username && about && social){
+      let regName =/^[a-zA-Z]+$/;
+      let regUrl = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+      setRequired('')
+      if(regName.test(name.toString())){
+        setName(false)
+        setNameErr('')
+        if(username.length >= 3){
+          setUserName(false)
+          setUserNameErr('')
+          if(about.length >= 10){
+            setAbout(false)
+            setAboutErr('')
+            if(regUrl.test(social.toString())){
+              setSocial(false)
+              setSocailErr('')
+              setUserDetails(obj)
+
+              axios.post('http://localhost:3002/signup',{obj}).then((response)=>{
+                console.log(response.data);
+                if(response.data.status == "success"){
+                  
+                }
+              })
+
+            }else{
+              setSocial(true)
+              setSocailErr('Enter a valid link')
+            }
+          }else{
+            setAbout(true)
+            setAboutErr('About should be contain at least 10 character')
+          }
+        }else{
+          setUserName(true)
+          setUserNameErr('username must be need more than 3 characters')
+        }
+      }else{
+        setName(true)
+        setNameErr('')
+      }
+
+    }else{
+      setRequired('All feilds are required')
+    }
   };
 
   return (
@@ -64,6 +132,8 @@ export default function CompletePage() {
                   label="Name"
                   name="name"
                   autoComplete="name"
+                  error={name}
+                  helperText={nameErr}
                   sx={{
                     "& .MuiInputLabel-root.Mui-focused": {color: '#4f4e4e'},//styles the label
                     "& .MuiOutlinedInput-root.Mui-focused": {"& > fieldset": { borderColor: "#f22c50" }},
@@ -76,10 +146,12 @@ export default function CompletePage() {
                 <TextField
                   required
                   fullWidth
-                  id="link"
-                  label="Your page link"
-                  name="link"
-                  autoComplete="link"
+                  id="username"
+                  label="Your page username"
+                  name="username"
+                  autoComplete="username"
+                  error={userName}
+                  helperText={userNameErr}
                   sx={{
                     "& .MuiInputLabel-root.Mui-focused": {color: '#4f4e4e'},//styles the label
                     "& .MuiOutlinedInput-root.Mui-focused": {"& > fieldset": { borderColor: "#f22c50" }},
@@ -100,6 +172,8 @@ export default function CompletePage() {
                   placeholder="Hey 👋 I just created a page here. Make a day for me !"
                   multiline
                   rows={3}
+                  error={about}
+                  helperText={aboutErr}
                   sx={{
                     "& .MuiInputLabel-root.Mui-focused": {color: '#4f4e4e'},
                     "& .MuiOutlinedInput-root.Mui-focused": {"& > fieldset": {borderColor: "#f22c50"}},
@@ -116,6 +190,8 @@ export default function CompletePage() {
                   placeholder="https://"
                   name="social"
                   autoComplete="social"
+                  error={social}
+                  helperText={socialErr}
                   sx={{
                     "& .MuiInputLabel-root.Mui-focused": {color: '#4f4e4e'},//styles the label
                     "& .MuiOutlinedInput-root.Mui-focused": {"& > fieldset": { borderColor: "#f22c50" }},

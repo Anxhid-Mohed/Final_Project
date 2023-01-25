@@ -8,14 +8,13 @@ import userRouter from './routes/user/userRouter'
 const cookieParser = require('cookie-parser');
 
 //variables
-const port = process.env.PORT
+const port = process.env.PORT || 3001
 const DATABASE_URL : string | undefined = process.env.DATABASE_URL
 const app:Application = express();
 (async  () => {
 await connectDb(String(DATABASE_URL))
 
 })()
-
 
 //middlewares
 app.use(cors({
