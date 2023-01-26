@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import userModel from '../model/userSchema'
 
 
+//---> Authentication-validation <---//
 export const verifyAuth = async(req:Request,res:Response) => {
     try {
         const {email,password} = req.body.userData
@@ -34,6 +35,7 @@ export const verifyAuth = async(req:Request,res:Response) => {
     }
 }
 
+//---> User-Signup <---//
 export const userSignup = async(req:Request,res:Response) => {
     try {
 
@@ -69,4 +71,11 @@ export const userSignup = async(req:Request,res:Response) => {
     } catch (error) {
         console.log(error)
     }
+}
+
+export const userSignin = async (req:Request,res:Response) => {
+    console.log(req.body);
+    const userData = { ...req.body.signinData }
+    console.log(userData);
+    
 }

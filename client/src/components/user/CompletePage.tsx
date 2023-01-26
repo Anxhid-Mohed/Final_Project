@@ -7,6 +7,8 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/router';
 import { AuthContext } from '@/context/Context';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -58,7 +60,7 @@ export default function CompletePage() {
     console.log(obj);
     const {name,username,about,social} = obj
     if(name && username && about && social){
-      let regName =/^[a-zA-Z]+$/;
+      let regName = /^[a-zA-Z]{2,40}( [a-zA-Z]{2,40})+$/;
       let regUrl = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
       setRequired('')
       if(regName.test(name.toString())){
@@ -78,13 +80,37 @@ export default function CompletePage() {
               axios.post('http://localhost:3002/signup',{obj}).then((response)=>{
                 console.log(response.data);
                 if(response.data.status == "success"){
-                  
+                  toast.success('Signup successfull!', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                  });
+                  setTimeout(()=>{
+                    localStorage.setItem('userToken',response.data.token)
+                    router.push('/dashboard')
+                  },1200)
+                }else{
+                  toast.error('Oops..,Somthing went wrong', {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                  });  
                 }
               })
 
             }else{
               setSocial(true)
-              setSocailErr('Enter a valid link')
+              setSocailErr('Please,enter a valid link')
             }
           }else{
             setAbout(true)
@@ -96,7 +122,7 @@ export default function CompletePage() {
         }
       }else{
         setName(true)
-        setNameErr('')
+        setNameErr('Name should only have no special characters')
       }
 
     }else{
@@ -106,6 +132,7 @@ export default function CompletePage() {
 
   return (
     <ThemeProvider theme={theme}>
+      <ToastContainer/>
       <Container component="main" maxWidth="xs">
         
         <CssBaseline />

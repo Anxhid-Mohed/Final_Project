@@ -7,6 +7,13 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import {useEffect} from 'react';
+import { useRouter } from 'next/router';
+import { userApi } from '@/utils/apis';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {useState} from 'react'
+import axios from 'axios';
 
 function Copyright(props: any) {
   return (
@@ -26,17 +33,98 @@ const theme = createTheme({
  });
 
 export default function SignIn() {
+
+  const router = useRouter()
+  const [email,setEmail] = useState(false)
+  const [emailErr,setEmailErr] = useState('')
+  const [password,setPassword] = useState(false)
+  const [passwordErr,setPasswordErr] = useState('')
+  const [required ,setRequired] = useState('')
+
+  // useEffect(()=>{
+
+  //   if(localStorage.getItem('userToken')){
+  //     console.log(userApi);
+      
+  //     axios.get('http://localhost:3002/verify-token',{headers:{'userToken':localStorage.getItem('userToken')}}).then((response)=>{
+  //       console.log(response);
+        
+  //       // if(response.data.status === "failed"){
+  //       //   router.push('/auth')
+  //       // }else if(response.data.auth){
+  //       //   router.push('/')
+  //       // }
+  //     })
+  //   }else{
+  //     router.push('/auth')
+  //   }
+  // })
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
+    let signinData = {
       email: data.get('email'),
       password: data.get('password'),
-    });
+    };
+    if(signinData.email && signinData.password){
+      let regEmail =/^[a-zA-Z0-9.!#$%&'+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)$/
+      setRequired('');
+      if(regEmail.test(signinData.email.toString())){
+        setEmail(false)
+        setEmailErr('')
+        if(signinData.password.length >= 8){
+          setPassword(false)
+          setEmailErr('')
+
+          axios.post('http://localhost:3002/signin',{signinData}).then((response)=>{
+            if(response.data.status == "success"){
+
+              toast.success('Here we go..!', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+              setTimeout(()=>{
+                router.push('/dashboard')
+              },1500)
+
+            }else{
+              toast.error('Oops..,Somthing went wrong', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+            }
+            
+          })
+
+        }else{
+          setPassword(true)
+          setPasswordErr('Password must be at least 8 characters')
+        }
+      }else{
+        setEmail(true)
+        setEmailErr('Please enter valid email address')
+      }
+    }else{
+      setRequired('All feilds are required')
+    }
   };
 
   return (
     <ThemeProvider theme={theme}>
+      <ToastContainer/>
       <Container component="main" maxWidth="xs">
         
         <CssBaseline />
