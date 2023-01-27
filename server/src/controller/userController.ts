@@ -7,7 +7,7 @@ import userModel from '../model/userSchema'
 //---> Authentication-validation <---//
 export const verifyAuth = async(req:Request,res:Response) => {
     try {
-        const {email,password} = req.body.userData
+        const {email,password} = req.body
         if(email && password){
 
             let regEmail =/^[a-zA-Z0-9.!#$%&'+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)$/;
@@ -15,8 +15,24 @@ export const verifyAuth = async(req:Request,res:Response) => {
             if(regEmail.test(email)){
                 if(password.length >= 8){
                     const userExit = await userModel.findOne({email:email})
+
                     if(!userExit){
-                        res.json({ "status": "success", "message": "approved" })
+                        const salt = await genSalt(10)
+                        const hashedPassword = await hash(password,salt)
+                        const doc = new userModel({
+                            email:email,
+                            password:hashedPassword,
+                            name:null,
+                            username:null,
+                            about:null,
+                            socialLink:null,
+                            isAuth:false
+                        })
+                        await doc.save()
+                        const user = await userModel.findOne({email:email})
+                        const userId = user?._id
+                        console.log(userId);
+                        res.json({userId:userId ,"status": "success", "message": "approved" })
                     }else{
                         res.json({"status":"failed","message":"Your email already exist"})
                     }
@@ -38,30 +54,29 @@ export const verifyAuth = async(req:Request,res:Response) => {
 //---> User-Signup <---//
 export const userSignup = async(req:Request,res:Response) => {
     try {
-
-        const userData = { ...req.body.obj }
+        console.log(req.body)
+        const userData = { ...req.body }
         const userNameExist = await userModel.findOne({username:userData.username})
 
         if(!userNameExist){
-            const salt = await genSalt(10)
-            const hashedPassword = await hash(userData.password,salt)
-            const doc = new userModel({
-    
-                email:userData.email,
-                password:hashedPassword,
+            const userId = userData.userId
+            console.log(userId);
+            
+            await userModel.findByIdAndUpdate(userId,{
+
                 name:userData.name,
                 username:userData.username,
                 about:userData.about,
                 socialLink:userData.social,
 
-            })
-            await doc.save()
+            }) 
+       
 
-            let userInfos:any = await userModel.findOne({ email:userData.email})
-            let userId = userInfos._id;
-            let KEY:string = process.env.JWT_KEY as string;
-            const token = jwt.sign({userId},KEY, { expiresIn: '3d' })
-            res.json({auth:true,token:token,status:"success"})
+            // let userInfos:any = await userModel.findOne({ email:userData.email})
+            // let userId = userInfos._id;
+            // let KEY:string = process.env.JWT_KEY as string;
+            // const token = jwt.sign({userId},KEY, { expiresIn: '3d' })
+            // res.json({auth:true,token:token,status:"success"})
 
 
         }else{
@@ -71,6 +86,12 @@ export const userSignup = async(req:Request,res:Response) => {
     } catch (error) {
         console.log(error)
     }
+}
+
+export const userSignupData = async (req:Request,res:Response) => {
+    console.log("helloo");
+    
+    console.log(req.body)
 }
 
 export const userSignin = async (req:Request,res:Response) => {

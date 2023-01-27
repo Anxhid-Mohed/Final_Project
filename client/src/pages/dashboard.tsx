@@ -1,6 +1,6 @@
 import { Grid} from '@mui/material'
-import SideBar from '@/components/user/SideBar'
-import Navbar from "@/components/user/NavBar";
+import SideBar from '@/components/user/SideBar/SideBar'
+import Navbar from "@/components/user/NavBar/NavBar";
 import { Container } from "@mui/system";
 
 

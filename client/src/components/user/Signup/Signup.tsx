@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import { signup } from '@/Apis/userApi/userAuthRequest';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/router';
@@ -33,7 +34,7 @@ const theme = createTheme({
     }
  });
 
-export default function SignUp() {
+export default  function SignUp() {
 
   const { userDetails, setUserDetails }: any = useContext(AuthContext);
   const router = useRouter()
@@ -44,7 +45,7 @@ export default function SignUp() {
    const [passwordErr,setPasswordErr] = useState('')
    const [required ,setRequired] = useState('')
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     let userData = {
@@ -63,8 +64,10 @@ export default function SignUp() {
           setEmailErr('')
           setUserDetails(userData)
 
-          axios.post('http://localhost:3002/verify-auth',{userData}).then((response)=>{
-            if(response.data.status == "success"){
+          const response = await signup(userData)
+          console.log(response);
+          
+            if(response.status == "success"){
 
               toast.success('Here we go..!', {
                 position: "top-right",
@@ -77,6 +80,7 @@ export default function SignUp() {
                 theme: "colored",
               });
               setTimeout(()=>{
+                localStorage.setItem('userId',response.userId)
                 router.push('/complete-your-page')
               },1500)
 
@@ -93,7 +97,7 @@ export default function SignUp() {
               });
             }
             
-          })
+          // })
 
         }else{
           setPassword(true)

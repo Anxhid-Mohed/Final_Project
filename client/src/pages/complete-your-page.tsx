@@ -1,4 +1,4 @@
-import CompletePage from "@/components/user/CompletePage";
+import CompletePage from "@/components/user/CompletePage/CompletePage";
 
 const CompletePages = () => {
     return (  
