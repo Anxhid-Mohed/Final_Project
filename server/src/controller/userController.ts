@@ -2,6 +2,7 @@ import { Request,Response } from 'express';
 import {genSalt,hash} from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import userModel from '../model/userSchema'
+import { nodemailer } from '../utils/nodeMailer';
 
 
 //---> Authentication-validation <---//
@@ -70,7 +71,10 @@ export const userSignup = async(req:Request,res:Response) => {
                 socialLink:userData.social,
 
             }) 
-       
+            const user = await userModel.findById(userId)
+            const email = user?.email as string
+            await nodemailer(userId,email)
+
 
             // let userInfos:any = await userModel.findOne({ email:userData.email})
             // let userId = userInfos._id;

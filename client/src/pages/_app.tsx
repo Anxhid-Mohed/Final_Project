@@ -8,8 +8,6 @@ export default function App({ Component, pageProps }: AppProps) {
   return(
     <AuthContext.Provider value={{userDetails:userDetails, setUserDetails:setUserDetails}}>
       <Component {...pageProps} />
-    </AuthContext.Provider>
-      
-        
+    </AuthContext.Provider>    
   )
 }
