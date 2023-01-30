@@ -92,10 +92,9 @@ export const userSignup = async(req:Request,res:Response) => {
     }
 }
 
-export const userSignupData = async (req:Request,res:Response) => {
-    console.log("helloo");
-    
-    console.log(req.body)
+export const accountVerification = async (req:Request,res:Response) => {
+
+    console.log('hhjhgh')
 }
 
 export const userSignin = async (req:Request,res:Response) => {

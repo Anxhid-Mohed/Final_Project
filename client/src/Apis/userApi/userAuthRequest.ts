@@ -17,3 +17,12 @@ export const userSignupData = async (formData:any) => {
         
     }
 }
+
+export const verifyAccount = async (id:string,token:string) => {
+    try {
+        const {data} = await userApi.get(`/verify/${id}/${token}`);
+        return data;
+    } catch (error) {
+        
+    }
+}

@@ -23,7 +23,7 @@ const userSchema = new Schema({
     socialLink:{
         type:String,
     },
-    isAuth:{
+    isVerified:{
         type:Boolean,
         default:false,
     },

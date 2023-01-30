@@ -85,7 +85,7 @@ export default  function SignUp() {
               },1500)
 
             }else{
-              toast.error('Oops..,Somthing went wrong', {
+              toast.error(response.message, {
                 position: "top-right",
                 autoClose: 3000,
                 hideProgressBar: false,
