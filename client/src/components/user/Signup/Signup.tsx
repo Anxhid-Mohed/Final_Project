@@ -34,7 +34,7 @@ const theme = createTheme({
     }
  });
 
-export default  function SignUp() {
+export default function SignUp() {
 
   const { userDetails, setUserDetails }: any = useContext(AuthContext);
   const router = useRouter()

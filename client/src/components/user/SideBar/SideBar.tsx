@@ -18,7 +18,7 @@ const SideBar = () => {
     return ( 
         <>
            <Grid sx={{display: { xs: 'none', sm: 'none', md: 'block'} }} >
-              <Grid className='comp' sx={{ height: '40vw', overflowY:'scroll' , overflowX: 'hidden' }}>
+              <Grid className='comp' sx={{ minHeight: '40vw', overflowY:'scroll' , overflowX: 'hidden' }}>
                 <Box sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,":hover":{backgroundColor:'#e8e8e8'}}}>
                     <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                         <HomeIcon/>
@@ -32,7 +32,7 @@ const SideBar = () => {
                     </Box>
                 </Box>
                 
-                <h6>PUBLISH</h6>
+                <h6 style={{marginLeft:'5px'}} >PUBLISH</h6>
 
                 <Box sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,mt:1,":hover":{backgroundColor:'#e8e8e8'}}}>
                     <Box sx={{ml:2,display:'flex',color:'#333232'}}>
@@ -61,7 +61,7 @@ const SideBar = () => {
                     </Box>
                 </Box>
 
-                <h6>SETTINGS</h6>
+                <h6 style={{marginLeft:'5px'}}>SETTINGS</h6>
                 <Box sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,mt:1,":hover":{backgroundColor:'#e8e8e8'}}}>
                     <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                         <BoltIcon/>

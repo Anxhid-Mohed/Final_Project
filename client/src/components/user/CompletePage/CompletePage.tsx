@@ -52,7 +52,6 @@ export default function CompletePage() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const userId = localStorage.getItem('userId');
-    // console.log("userId: " + userId);
     
     let obj = {
       name: data.get('name'),
@@ -61,7 +60,7 @@ export default function CompletePage() {
       social: data.get('social'),
       userId: userId
     };
-    // console.log(obj);
+
     const {name,username,about,social} = obj
     if(name && username && about && social){
       let regName = /^[a-zA-Z]{2,40}( [a-zA-Z]{2,40})+$/;
@@ -82,36 +81,36 @@ export default function CompletePage() {
               setUserDetails(obj)
 
               const response = await userSignupData(obj)
-              // axios.post('http://localhost:3002/signup',{obj}).then((response)=>{
-              //   console.log(response.data);
-              //   if(response.data.status == "success"){
-              //     toast.success('Signup successfull!', {
-              //       position: "top-right",
-              //       autoClose: 2000,
-              //       hideProgressBar: false,
-              //       closeOnClick: true,
-              //       pauseOnHover: true,
-              //       draggable: true,
-              //       progress: undefined,
-              //       theme: "colored",
-              //     });
-              //     setTimeout(()=>{
-              //       localStorage.setItem('userToken',response.data.token)
-              //       router.push('/dashboard')
-              //     },1200)
-              //   }else{
-              //     toast.error('Oops..,Somthing went wrong', {
-              //       position: "top-right",
-              //       autoClose: 3000,
-              //       hideProgressBar: false,
-              //       closeOnClick: true,
-              //       pauseOnHover: true,
-              //       draggable: true,
-              //       progress: undefined,
-              //       theme: "colored",
-              //     });  
-              //   }
-              // })
+              console.log('here',response);
+              
+                if(response.message == 'success'){
+                  toast.success(response.message, {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                  });
+                  setTimeout(()=>{
+                    localStorage.removeItem('userId')
+                    router.push('/activate')
+                  },1200)
+                }else{
+                  toast.error(response.message, {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                  });  
+                }
+              
 
             }else{
               setSocial(true)

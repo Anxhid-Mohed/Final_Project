@@ -11,8 +11,9 @@ export const signup = async (formData:any) => {
 
 export const userSignupData = async (formData:any) => {
     try {
-        const {data} = await userApi.post('/signup',formData)
+        const {data} = await userApi.post('/signup',formData);
         return data;
+
     } catch (error) {
         
     }
@@ -20,7 +21,7 @@ export const userSignupData = async (formData:any) => {
 
 export const verifyAccount = async (id:string,token:string) => {
     try {
-        const {data} = await userApi.get(`/verify/${id}/${token}`);
+        const {data} = await userApi.post(`/verify`,{id,token});
         return data;
     } catch (error) {
         

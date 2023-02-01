@@ -13,7 +13,6 @@ export const nodemailer =async (id:string,email:string) => {
     token:crypto.randomBytes(32).toString('hex')
     }).save();
 
-    console.log(userToken.token);
     const url = `${process.env.CLIENT_BASE_URL}/verify?id=${id}&token=${userToken.token}`
     sendMail(email,'verify email' ,url)
 }

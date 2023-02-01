@@ -14,7 +14,7 @@ const Dashboard = () => {
                     <SideBar/>
                 </Grid>
                 <Grid xs={9.5} sm={9.5} md={9.5} sx={{lineBreak:'anywhere'}}>
-                    <h1>SecondBar</h1>
+                    <h1 className='text-white'>SecondBar</h1>
                 </Grid>
             </Grid>
           </Container>

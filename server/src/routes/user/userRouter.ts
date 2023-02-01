@@ -6,9 +6,7 @@ const router : Router = express.Router()
 
 router.post('/verify-auth',verifyAuth)
 router.post('/signup',userSignup)
-router.get('/verify',accountVerification)
+router.post('/verify',accountVerification)
 router.post('/signin',userSignin)
 
-
-// router.get('/verify-token',verifyToken)
 export default router
