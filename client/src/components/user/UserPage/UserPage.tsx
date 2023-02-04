@@ -1,14 +1,14 @@
 /* eslint-disable react/jsx-no-undef */
 /* eslint-disable @next/next/no-img-element */
-import { Box, Divider, Grid, Stack, Typography,} from "@mui/material";
+import { Avatar, Box, Button, Divider, Grid, Stack, Typography,} from "@mui/material";
 import { Container } from "@mui/system";
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import About from "../PageComponents/About";
-import Posts from "../PageComponents/AddPost";
+import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
+import {AiOutlineMessage } from 'react-icons/ai'
 import AboutPage from "../About/AboutPage";
 
 
 const userPage = () => {
+    const style = { color:'#303030', fontSize: "1.8em" }
     return (  
         
         <Container  maxWidth={false}  sx={{ maxWidth: '1000px'}}>
@@ -18,31 +18,48 @@ const userPage = () => {
                 width:{ xs:'100%' , sm:'100%' , md:'100%'},
                 borderRadius:'15px'
             }}>
-
+                {/* //Cover-image */}
             </Grid>
+            
             <Grid xs={12} sx={{display:'flex' , lineBreak:'anywhere' , minHeight:'10px'}}>
-                <Grid xs={2}sx={{
+                <Grid xs={2} md={2} sx={{
                     pl: 1,
                     marginTop:'-20px'
                 }}>
-                    <img src="https://w7.pngwing.com/pngs/798/436/png-transparent-computer-icons-user-profile-avatar-profile-heroes-black-profile-thumbnail.png" alt="" style={{  width:'45%' ,borderRadius:'50%' }} />
-                </Grid>
-                <Grid xs={7} sx={{ width:'100%' , ml:{ xs: -13 , sm: -13 , md: -16} }}>
-                    <Box sx={{marginTop:'10px'}}>
-                        <Typography sx={{ fontWeight:'bold' , fontSize:{ xs:'18px' , md:'24px'} }} >Muhammed Anshid</Typography>
+                    <img src="https://w7.pngwing.com/pngs/798/436/png-transparent-computer-icons-user-profile-avatar-profile-heroes-black-profile-thumbnail.png" alt="" style={{  width:'41%' ,borderRadius:'50%' }} />
+                    <Box sx={{marginTop:'5px' , display:{ xs:'block' , md:'none' }}}>
+                        <Typography sx={{ fontWeight:'600' , fontSize:{ xs:'18px' , md:'24px'} }} >Muhammed Anshid</Typography>
                         <Typography sx={{ fontSize:{ xs:'10px' , md:'17px'} }}><a href="">http://localhost:3000/pagevxvxcvxv</a></Typography>
                     </Box>
-
                 </Grid>
-                <Grid xs={2} sx={{ marginTop:'4%' }}>
-                    <Box sx={{
-                        width:'40px',
-                        height:'40px',
-                        borderRadius:'50%',
-                        backgroundColor:'#c9c8c7',
-                        padding:'19%'
-                    }}>
-                        <SettingsOutlinedIcon/>
+
+                <Grid xs={5} md={6} sx={{ width:{md:'54%'} , ml:{ xs: -13 , sm: -10 , md: -22} }}>
+                    <Box sx={{marginTop:'10px', display:{ xs:'none' , md:'block' }}}>
+                        <Typography sx={{ fontWeight:'600' , fontSize:{ xs:'18px' , md:'24px'} }} >Muhammed Anshid</Typography>
+                        <Typography sx={{ fontSize:{ xs:'10px' , md:'17px'} }}><a href="">http://localhost:3000/pagevxvxcvxv</a></Typography>
+                    </Box>
+                </Grid>
+
+                <Grid xs={5} md={4} sx={{ marginTop:'2%',display:'flex' , ml:'auto' }}>
+
+                    <Box m={0.3}>
+                        <Button  sx={{
+                            backgroundColor:'#eb1e44',
+                            "&:hover": { backgroundColor: "#eb1e44"},
+                            textTransform: 'none',
+                            borderRadius: 3,
+                            color:'white',
+                            width:{md:'8.2rem'},
+                        }}>Follow</Button>
+                    </Box>
+                    
+                    <Box m={0.3}>
+                        <Button sx={{
+                            backgroundColor:'#f0eded',
+                            "&:hover": { backgroundColor: "#f0eded"},
+                            textTransform: 'none',
+                            borderRadius: 4,
+                        }}><AiOutlineMessage style={style} /></Button>
                     </Box>
                 </Grid>
             </Grid>

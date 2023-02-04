@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import {useEffect} from 'react';
 import { useRouter } from 'next/router';
-import { verifyAccount } from '@/Apis/userApi/userAuthRequest';
+import { accountVerification } from '@/Apis/userApi/userAuthRequest';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Box, Typography } from '@mui/material';
@@ -16,7 +16,7 @@ export const VerifySignup = () => {
         if(id && token){
             (
                 async () => {
-                    const response = await verifyAccount(id.toString(),token.toString())
+                    const response = await accountVerification(id.toString(),token.toString())
                     console.log(response);   
                     if(response.auth == true){
                         toast.success(response.message, {

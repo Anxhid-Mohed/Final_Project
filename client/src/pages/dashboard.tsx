@@ -2,25 +2,23 @@ import { Grid} from '@mui/material'
 import SideBar from '@/components/user/SideBar/SideBar'
 import Navbar from "@/components/user/NavBar/NavBar";
 import { Container } from "@mui/system";
+import HomePage from '@/components/user/HomePage/Home';
 
 
 const Dashboard = () => {
     return (  
         <>
           <Navbar/>
-          <Container>
-            <Grid container sx={{display:'flex',mt:11}}>
-                <Grid xs={2.5} sm={2.5} md={2.5}>
-                    <SideBar/>
+            <Container>
+                <Grid container sx={{display:'flex',mt:11}}>
+                    <Grid md={2.5} sx={{display: { xs: 'none', sm: 'none', md: 'block'} }}>
+                        <SideBar/>
+                    </Grid>
+                    <Grid xs={12} sm={12} md={9.5} sx={{lineBreak:'anywhere'}}>
+                        <HomePage/>
+                    </Grid>
                 </Grid>
-                <Grid xs={9.5} sm={9.5} md={9.5} sx={{lineBreak:'anywhere'}}>
-                    <h1 className='text-white'>SecondBar</h1>
-                </Grid>
-            </Grid>
-          </Container>
-
-          
-
+            </Container>
         </>
     );
 }

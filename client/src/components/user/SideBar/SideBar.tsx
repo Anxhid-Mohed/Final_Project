@@ -12,13 +12,20 @@ import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import SettingsIcon from '@mui/icons-material/Settings';
 import InfoIcon from '@mui/icons-material/Info';
 import LogoutIcon from '@mui/icons-material/Logout';
+import Router from 'next/router';
 
 
 const SideBar = () => {
+
+    const handleClick = () => {
+        localStorage.removeItem('userToken');
+        Router.push('/auth');
+    }
+
     return ( 
         <>
-           <Grid sx={{display: { xs: 'none', sm: 'none', md: 'block'} }} >
-              <Grid className='comp' sx={{ minHeight: '40vw', overflowY:'scroll' , overflowX: 'hidden' }}>
+           <Grid sx={{position:'fixed'}}  >
+              <Grid className='comp' sx={{minWidth:'207px', minHeight: '40vw', overflowY:'scroll' , overflowX: 'hidden',}}>
                 <Box sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,":hover":{backgroundColor:'#e8e8e8'}}}>
                     <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                         <HomeIcon/>
@@ -86,13 +93,14 @@ const SideBar = () => {
                         <h4 style={{marginTop:'auto',marginLeft:'6px'}}>About</h4>
                     </Box>
                 </Box>
-                <Box sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,":hover":{backgroundColor:'#e8e8e8'}}}>
+                <a onClick={handleClick}>
+                <Box  sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,":hover":{backgroundColor:'#e8e8e8'}}}>
                     <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                         <LogoutIcon/>
                         <h4 style={{marginTop:'auto',marginLeft:'6px'}}>Logout</h4>
                     </Box>
                 </Box>
-
+                </a>
               </Grid>
               
             </Grid>

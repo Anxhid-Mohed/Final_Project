@@ -4,7 +4,7 @@ const About = () => {
     return (  
        <Box boxShadow={2} sx={{
         borderRadius:'20px',
-        py:'5px'
+        py:'3px'
          }}>
             <Box p={2} sx={{color:'#333232'}}>
                 <h4 style={{marginTop:'4px'}}>Support Anshy</h4><br/>

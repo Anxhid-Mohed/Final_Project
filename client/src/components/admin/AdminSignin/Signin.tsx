@@ -1,5 +1,4 @@
 import * as React from 'react';
-import axios from 'axios';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -7,16 +6,16 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { signup } from '@/Apis/userApi/userAuthRequest';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import {useEffect} from 'react';
+import { useRouter } from 'next/router';
+import { userApi } from '@/utils/apis';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useRouter } from 'next/router';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useState} from 'react'
+import axios from 'axios';
 
-
-
-function Copyright(props:any) {
+function Copyright(props: any) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'By signing up, you agree to our terms and privacy policy. You must be at least 18 years old to start a page.'}
@@ -33,38 +32,53 @@ const theme = createTheme({
     }
  });
 
-export default function SignUp() {
+export default function AdminSignIn() {
 
   const router = useRouter()
+  const [email,setEmail] = useState(false)
+  const [emailErr,setEmailErr] = useState('')
+  const [password,setPassword] = useState(false)
+  const [passwordErr,setPasswordErr] = useState('')
+  const [required ,setRequired] = useState('')
 
-   const [email,setEmail] = useState(false)
-   const [emailErr,setEmailErr] = useState('')
-   const [password,setPassword] = useState(false)
-   const [passwordErr,setPasswordErr] = useState('')
-   const [required ,setRequired] = useState('')
+  // useEffect(()=>{
 
-  const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
+  //   if(localStorage.getItem('userToken')){
+  //     console.log(userApi);
+      
+  //     axios.get('http://localhost:3002/verify-token',{headers:{'userToken':localStorage.getItem('userToken')}}).then((response)=>{
+  //       console.log(response);
+        
+  //       // if(response.data.status === "failed"){
+  //       //   router.push('/auth')
+  //       // }else if(response.data.auth){
+  //       //   router.push('/')
+  //       // }
+  //     })
+  //   }else{
+  //     router.push('/auth')
+  //   }
+  // })
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    let userData = {
+    let signinData = {
       email: data.get('email'),
       password: data.get('password'),
-    }
-
-    if(userData.email && userData.password){
+    };
+    if(signinData.email && signinData.password){
       let regEmail =/^[a-zA-Z0-9.!#$%&'+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)$/
       setRequired('');
-      if(regEmail.test(userData.email.toString())){
+      if(regEmail.test(signinData.email.toString())){
         setEmail(false)
         setEmailErr('')
-        if(userData.password.length >= 8){
+        if(signinData.password.length >= 8){
           setPassword(false)
           setEmailErr('')
 
-          const response = await signup(userData)
-          console.log(response);
-          
-            if(response.status == "success"){
+          axios.post('http://localhost:3002/signin',{signinData}).then((response)=>{
+            if(response.data.status == "success"){
 
               toast.success('Here we go..!', {
                 position: "top-right",
@@ -77,12 +91,11 @@ export default function SignUp() {
                 theme: "colored",
               });
               setTimeout(()=>{
-                localStorage.setItem('userId',response.userId)
-                router.push('/complete-your-page')
+                router.push('/dashboard')
               },1500)
 
             }else{
-              toast.error(response.message, {
+              toast.error('Oops..,Somthing went wrong', {
                 position: "top-right",
                 autoClose: 3000,
                 hideProgressBar: false,
@@ -94,7 +107,7 @@ export default function SignUp() {
               });
             }
             
-          // })
+          })
 
         }else{
           setPassword(true)
@@ -108,7 +121,6 @@ export default function SignUp() {
       setRequired('All feilds are required')
     }
   };
-
 
   return (
     <ThemeProvider theme={theme}>
@@ -126,7 +138,7 @@ export default function SignUp() {
         >
 
           <Typography component="h1" variant="h4" sx={{fontWeight:'600'}}>
-            Sign up
+            Welcome Admin
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
@@ -138,11 +150,9 @@ export default function SignUp() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
-                  error={email}
-                  helperText={emailErr}
                   sx={{
-                    "& .MuiInputLabel-root.Mui-focused": {color: '#4f4e4e'},//styles the label
-                    "& .MuiOutlinedInput-root.Mui-focused": {"& > fieldset": { borderColor: "#f22c50" }},
+                    "& .MuiInputLabel-root.Mui-focused": {color: '#191a19'},//styles the label
+                    "& .MuiOutlinedInput-root.Mui-focused": {"& > fieldset": { borderColor: "#191a19" }},
                     '& .MuiOutlinedInput-root': {'& fieldset': {borderRadius: 3}}
                   }}
                   
@@ -157,11 +167,9 @@ export default function SignUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
-                  error={password}
-                  helperText={passwordErr}
                   sx={{
-                    "& .MuiInputLabel-root.Mui-focused": {color: '#4f4e4e'},
-                    "& .MuiOutlinedInput-root.Mui-focused": {"& > fieldset": {borderColor: "#f22c50"}},
+                    "& .MuiInputLabel-root.Mui-focused": {color: '#191a19'},
+                    "& .MuiOutlinedInput-root.Mui-focused": {"& > fieldset": {borderColor: "#191a19"}},
                     '& .MuiOutlinedInput-root': {'& fieldset': {borderRadius: 3}}
                   }}
                 />
@@ -175,39 +183,14 @@ export default function SignUp() {
                     mb: 2 ,
                     borderRadius:'20px',
                     height:'42px',
-                    backgroundColor:'#eb1e44',
-                    "&:hover": { backgroundColor: "#eb1e44"},
+                    backgroundColor:'#191a19',
+                    "&:hover": { backgroundColor: "#191a19"},
                     textTransform: 'none'
                 }}
             >
               Continue with email
             </Button>
             <hr/>
-            <Typography sx={{textAlign:'center',fontSize:'13px',fontWeight:'600',color:'#b5b2b1'}}>Or Signup with</Typography>
-            {/* <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Link href="#" variant="body2">
-                  Already have an account? Sign in
-                </Link>
-              </Grid>
-            </Grid> */}
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3,
-                    mb: 2,
-                    height:'42px',
-                    borderRadius:'20px',
-                    textTransform: 'none',
-                    background:'#ffff',
-                    border: '1px solid',
-                    "&:hover": { backgroundColor: "#ffff"},
-                    color:'black'
-                }}
-            >
-              Google
-            </Button>
           </Box>
         </Box>
         <Copyright sx={{ mt: 5 }} />

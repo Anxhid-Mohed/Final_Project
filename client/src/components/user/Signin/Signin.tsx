@@ -13,7 +13,9 @@ import { userApi } from '@/utils/apis';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {useState} from 'react'
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import { signin, tokenVerification } from '@/Apis/userApi/userAuthRequest';
+
 
 function Copyright(props: any) {
   return (
@@ -41,84 +43,87 @@ export default function SignIn() {
   const [passwordErr,setPasswordErr] = useState('')
   const [required ,setRequired] = useState('')
 
-  // useEffect(()=>{
+  useEffect(()=>{
+    let token = localStorage.getItem('userToken')
+    if(token){
+      console.log(token);
+      (
+        async () => {
+          const response = await tokenVerification(token);
+          console.log(response);
+          if(response.status == false){
+            router.push('/auth')
+          }else if (response.isAuthenticated){
+            router.push('/dashboard') 
+          }
+        }
+      )()
+    }else{
+      router.push('/auth')
+    }
+  },[])
 
-  //   if(localStorage.getItem('userToken')){
-  //     console.log(userApi);
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    try {
       
-  //     axios.get('http://localhost:3002/verify-token',{headers:{'userToken':localStorage.getItem('userToken')}}).then((response)=>{
-  //       console.log(response);
-        
-  //       // if(response.data.status === "failed"){
-  //       //   router.push('/auth')
-  //       // }else if(response.data.auth){
-  //       //   router.push('/')
-  //       // }
-  //     })
-  //   }else{
-  //     router.push('/auth')
-  //   }
-  // })
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    let signinData = {
-      email: data.get('email'),
-      password: data.get('password'),
-    };
-    if(signinData.email && signinData.password){
+      event.preventDefault();
+      
+      const data = new FormData(event.currentTarget);
+      let signinData = {
+        email: data.get('email'),
+        password: data.get('password'),
+      };
+      if(!signinData.email || !signinData.password){
+        setRequired('All feilds are required')
+        return;
+      }
       let regEmail =/^[a-zA-Z0-9.!#$%&'+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)$/
       setRequired('');
-      if(regEmail.test(signinData.email.toString())){
-        setEmail(false)
-        setEmailErr('')
-        if(signinData.password.length >= 8){
-          setPassword(false)
-          setEmailErr('')
-
-          axios.post('http://localhost:3002/signin',{signinData}).then((response)=>{
-            if(response.data.status == "success"){
-
-              toast.success('Here we go..!', {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-              });
-              setTimeout(()=>{
-                router.push('/dashboard')
-              },1500)
-
-            }else{
-              toast.error('Oops..,Somthing went wrong', {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-              });
-            }
-            
-          })
-
-        }else{
-          setPassword(true)
-          setPasswordErr('Password must be at least 8 characters')
-        }
-      }else{
+      if(!regEmail.test(signinData.email.toString())){
         setEmail(true)
-        setEmailErr('Please enter valid email address')
+        setEmailErr('Enter a valid email address')
+      } 
+      if(signinData.password.length < 8) {
+        setPassword(true)
+        setPasswordErr('Password must be at least 8 characters')
       }
-    }else{
-      setRequired('All feilds are required')
+        const response = await signin(signinData)
+        if (typeof response === 'string'){              
+          toast.error(response, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
+          return;
+        }
+        if(response.auth == true){
+
+          toast.success(response.message, {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
+          setTimeout(()=>{
+            localStorage.setItem('userToken',response.token)
+            router.push('/dashboard')
+          },1500)
+        }
+    } catch (err: any) {
+      console.log(err);
+      if(err instanceof AxiosError){
+        console.log(err?.response?.data?.message);
+      }
+      
     }
   };
 
@@ -143,6 +148,7 @@ export default function SignIn() {
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
+                {required && <Typography mb={0.5} sx={{color:'red',fontFamily:'sans-serif'}} align='center'>{required}</Typography>}
                 <TextField
                   required
                   fullWidth
@@ -150,6 +156,8 @@ export default function SignIn() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  error={email}
+                  helperText={emailErr}
                   sx={{
                     "& .MuiInputLabel-root.Mui-focused": {color: '#4f4e4e'},//styles the label
                     "& .MuiOutlinedInput-root.Mui-focused": {"& > fieldset": { borderColor: "#f22c50" }},
@@ -167,6 +175,8 @@ export default function SignIn() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  error={password}
+                  helperText={passwordErr}
                   sx={{
                     "& .MuiInputLabel-root.Mui-focused": {color: '#4f4e4e'},
                     "& .MuiOutlinedInput-root.Mui-focused": {"& > fieldset": {borderColor: "#f22c50"}},

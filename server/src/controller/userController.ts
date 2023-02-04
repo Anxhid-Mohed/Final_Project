@@ -1,5 +1,5 @@
 import { Request,Response } from 'express';
-import {genSalt,hash} from 'bcrypt';
+import {genSalt,hash,compare} from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import userModel from '../model/userSchema'
 import verificationModel from '../model/verificationToken';
@@ -8,7 +8,7 @@ import { nodemailer } from '../utils/nodeMailer';
 
 //---> Authentication-validation <---//
 export const verifyAuth = async(req:Request,res:Response) => {
-    try {
+    try {        
         const {email,password} = req.body
         if(email && password){
 
@@ -28,7 +28,8 @@ export const verifyAuth = async(req:Request,res:Response) => {
                             username:null,
                             about:null,
                             socialLink:null,
-                            isAuth:false
+                            isVerified:false,
+                            isAuthenticated:false
                         })
                         await doc.save()
                         const user = await userModel.findOne({email:email})
@@ -82,6 +83,7 @@ export const userSignup = async(req:Request,res:Response) => {
     }
 }
 
+//---> Email Account Activation <---//
 export const accountVerification = async (req:Request,res:Response) => {
     try {
         const {id,token} = req.body
@@ -109,10 +111,68 @@ export const accountVerification = async (req:Request,res:Response) => {
     }
     
 }
-
+//---> User Signin <---//
 export const userSignin = async (req:Request,res:Response) => {
+
+    try {
+        const {email,password} = req.body;
+        console.log(email,password);
+        if(email && password){
+            const user = await userModel.findOne({email:email})
+            // if(!user.isBanned){}
+                if(user){
+                    const userPass = user.password as string
+                    const isMatched = await compare(password, userPass)
+                    if( isMatched){
+                        const userEmail = user.email as string
+                        if(userEmail === email && isMatched){
+                            const token = jwt.sign({ userId: user._id}, process.env.JWT_KEY as string, { expiresIn: '3d' })
+                            res.status(200).json({auth:true,token:token,message:'Login successful'})
+                        }else{
+                            res.status(400).json({auth:false,message:'Your email or password is incorrect'})
+                        }
+                    }else{
+                        res.status(400).json({auth:false,message:'Your email or password is incorrect'})
+                    }
+                }else{
+                    res.status(400).json({auth:false,message:'User not exist'})
+                }
+        }else{
+            res.status(400).json({auth:false,message:'All feilds are required'})
+        }
+    } catch (error) {
+        res.status(500).json({message:'Internal Server Error'})
+    }
     
-    const userData = { ...req.body.signinData }
-    console.log(userData);
-    
+}
+
+export const createrRequest = async(req:Request, res: Response) => {
+    console.log('userrrr',req.userId); 
+}
+
+//---> Get user Datas <---//
+export const getDetails = async (req:Request,res:Response) => {
+    try {
+        const userId = req.userId
+        console.log("GET",userId);
+        const userData = await userModel.findById(userId)
+        console.log(userData);
+        
+        if (userData){
+          
+            res.json({
+                'userId': userData._id,
+                'email':userData.email,
+                'name':userData.name,
+                'username':userData.username,
+                'about':userData.about,
+                'socialLink':userData.socialLink,
+                'isVerified':userData.isVerified,
+                'isAuthenticated':true
+            }) 
+        }
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "Unknown error."
+        res.json({status:false, message:message})
+    }
 }
