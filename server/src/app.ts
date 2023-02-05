@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 dotenv.config();
 import connectDb from './config/dbconnection';
 import userRouter from './routes/user/userRouter'
+import adminRouter from './routes/admin/adminRouter';
 const cookieParser = require('cookie-parser');
 
 //variables
@@ -33,7 +34,7 @@ app.use(cookieParser());
 //routes
 
 app.use('/',userRouter)
-
+app.use('/admin',adminRouter)
 
 
 

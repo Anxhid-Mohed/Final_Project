@@ -1,7 +1,9 @@
-const Feeds = () => {
-    return (  
-        <h3>ggg</h3>
+const Feed = () => {
+    return ( 
+        <>
+        
+        </>
     );
 }
  
-export default Feeds;
+export default Feed;

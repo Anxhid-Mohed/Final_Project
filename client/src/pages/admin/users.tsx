@@ -8,41 +8,9 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import SideBar from '@/components/admin/SideBar/SideBar';
-import { Button, Container, Grid, styled } from '@mui/material';
-
-// interface Column {
-//   id: 'name' | 'code' | 'population' | 'size' | 'density';
-//   label: string;
-//   minWidth?: number;
-//   align?: 'right';
-//   format?: (value: number) => string;
-// }
-
-// const columns: readonly Column[] = [
-//   { id: 'name', label: 'Name', minWidth: 170 },
-//   { id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
-//   {
-//     id: 'population',
-//     label: 'Population',
-//     minWidth: 170,
-//     align: 'right',
-//     format: (value: number) => value.toLocaleString('en-US'),
-//   },
-//   {
-//     id: 'size',
-//     label: 'Size\u00a0(km\u00b2)',
-//     minWidth: 170,
-//     align: 'right',
-//     format: (value: number) => value.toLocaleString('en-US'),
-//   },
-//   {
-//     id: 'density',
-//     label: 'Density',
-//     minWidth: 170,
-//     align: 'right',
-//     format: (value: number) => value.toFixed(2),
-//   },
-// ];
+import moment from 'moment';
+import { Avatar, Box, Button, Container, Grid, styled } from '@mui/material';
+import { usersList } from '@/Apis/adminApi/AdminListing';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -100,7 +68,22 @@ const rows = [
   createData('Brazil', 'BR', 210147125, 8515767),
 ];
 
-export default function UsersTable() {
+export const getStaticProps = async(context:any) => {
+  try {
+    const response = await usersList();
+    // console.log('suiiiiiiiiiiiiiiiiiii',response.data);
+    return {
+      props : {users:response.data}
+    }
+  } catch (error) {
+    
+  }
+  // const res = await 
+}
+
+export default function UsersTable(users:any) {
+  console.log(users.users);
+  
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -114,58 +97,66 @@ export default function UsersTable() {
   };
 
   return (
-
    <Container>
-        <Grid container sx={{display:'flex',mt:11}}>
+        <Grid container sx={{display:'flex',pt:11}}>
             <Grid md={2.5} sx={{display: { xs: 'none', sm: 'none', md: 'block'} }}>
                 <SideBar/>
             </Grid>
-            <Grid xs={12} sm={12} md={9.5} sx={{lineBreak:'anywhere'}}>
-                
-            <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-                <TableContainer sx={{ maxHeight: 555 }}>
-                    <Table stickyHeader aria-label="sticky table">
-                        <TableHead>
-                            <TableRow>
-                                <StyledTableCell>Dessert (100g serving)</StyledTableCell>
-                                <StyledTableCell align="right">Calories</StyledTableCell>
-                                <StyledTableCell align="right">Fat&nbsp;(g)</StyledTableCell>
-                                <StyledTableCell align="right">Carbs&nbsp;(g)</StyledTableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {rows
-                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((row) => {
-                                return (
-                                <StyledTableRow key={row.name}>
-                                   <StyledTableCell component="th" scope="row"  tabIndex={-1} key={row.code}>row.name</StyledTableCell>
-                                    <StyledTableCell align="right">row.calories</StyledTableCell>
-                                    <StyledTableCell align="right">row.fat</StyledTableCell>
-                                    <StyledTableCell align="right">
-                                        <Button sx={{ backgroundColor:'#cc2b2e' , borderRadius:'29px' , boxShadow:3 , color:'#fff' , fontSize:'10px' , fontWeight:'800' , ":hover":{ backgroundColor:'red' } }}>
-                                            block
-                                        </Button>
-                                    </StyledTableCell>
-                                </StyledTableRow>
-                                );
-                            })}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-                <TablePagination
-                    rowsPerPageOptions={[10, 25, 100]}
-                    component="div"
-                    count={rows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
-            </Paper>
+            <Grid xs={12} sm={12} md={9.5} sx={{lineBreak:'auto'}}>   
+              <Paper sx={{ width: '100%',marginLeft:{md:'25px'}}}>
+                  <TableContainer sx={{ maxHeight: 560 }}>
+                      <Table stickyHeader aria-label="sticky table">
+                          <TableHead style={{borderRadius:'10px'}}>
+                              <TableRow>
+                                  <StyledTableCell sx={{ borderTopLeftRadius: '12px' , borderBottomLeftRadius: '12px'}}>User Name</StyledTableCell>
+                                  <StyledTableCell align="left">Email</StyledTableCell>
+                                  <StyledTableCell align="left">Joined</StyledTableCell>
+                                  <StyledTableCell sx={{ borderBottomRightRadius: '12px' , borderTopRightRadius: '12px'}} align="center">Actions</StyledTableCell>
+                              </TableRow>
+                          </TableHead>
+                          <TableBody>
+                              {users.users
+                              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                              .map((user:any) => {
+                                  return (
+                                  <StyledTableRow key={user._id}>
+                                     
+                                      <StyledTableCell sx={{display:'flex',alignItems: 'center'}} component="th" scope="row" tabIndex={-1} key={user._id}>
+                                      <Avatar sx={{marginRight:'5px'}} alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                                        {user.name}
+                                      </StyledTableCell>
+                                      <StyledTableCell align="left">{user.email}</StyledTableCell>
+                                      <StyledTableCell align="left">{moment(user.createdAt).format("Do MMMM, YYYY")}</StyledTableCell>
+                                      <StyledTableCell align="center">
+                                          <Button sx={{ 
+                                             backgroundColor:'#f04f4f',
+                                             borderRadius:'9px' ,
+                                             boxShadow:3 , 
+                                             color:'#fff' , 
+                                             fontSize:'10px' , 
+                                             fontWeight:'800' ,
+                                              ":hover":{ backgroundColor:'#f04f4f'}}}>
+                                              block
+                                          </Button>
+                                      </StyledTableCell>
+                                  </StyledTableRow>
+                                  );
+                              })}
+                          </TableBody>
+                      </Table>
+                  </TableContainer>
+                  <TablePagination
+                      rowsPerPageOptions={[10, 25, 100]}
+                      component="div"
+                      count={rows.length}
+                      rowsPerPage={rowsPerPage}
+                      page={page}
+                      onPageChange={handleChangePage}
+                      onRowsPerPageChange={handleChangeRowsPerPage}
+                  />
+              </Paper>
           </Grid>
         </Grid>
     </Container>
-    
   );
 }

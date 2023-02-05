@@ -6,7 +6,7 @@ const ProfilePage = () => {
     const style = { color:'#303030', fontSize: "1.8em" }
     return (
         <>
-            <Grid mt={4} p={3} boxShadow={1} sx={{borderRadius:'15px',border:'1px solid #dedede'}}>
+            <Grid mt={3} p={3} boxShadow={1} sx={{borderRadius:'15px',border:'1px solid #dedede'}}>
                 <Grid  xs={12} sx={{display:'flex'}} >
                     <Grid xs={4}  sm={7} md={8} sx={{display:{xs:'block', sm:'block' ,md:'flex'}}}>
                         <Grid xs={1} >

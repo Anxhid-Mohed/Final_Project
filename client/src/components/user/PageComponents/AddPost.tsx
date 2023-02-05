@@ -1,8 +1,8 @@
 import { Avatar, Box, Button, Chip, Stack, Typography } from "@mui/material";
-import {FcAddImage,FcVideoCall } from 'react-icons/fc';
-import {TfiWrite } from 'react-icons/tfi'
+import {FcAddImage,FcVideoCall ,FcRules } from 'react-icons/fc';
 
 const AddPosts = () => {
+    const style = { fontSize: "1.6em" }
     return (  
         <Box boxShadow={2} sx={{
             borderRadius:'20px',
@@ -32,9 +32,9 @@ const AddPosts = () => {
                     p={2}
                     spacing={2}
                 >
-                    <Box sx={{display:'flex',alignItems:'center'}}><FcAddImage/><Typography ml={1}>Image</Typography></Box>
-                    <Box sx={{display:'flex',alignItems:'center'}}><FcVideoCall/><Typography ml={1}>Video</Typography></Box>
-                    <Box sx={{display:'flex',alignItems:'center'}}><TfiWrite/><Typography ml={1}>Write</Typography></Box>
+                    <Box sx={{display:'flex',alignItems:'center'}}><FcAddImage style={style}/><Typography ml={1}>Image</Typography></Box>
+                    <Box sx={{display:'flex',alignItems:'center'}}><FcVideoCall style={style}/><Typography ml={1}>Video</Typography></Box>
+                    <Box sx={{display:'flex',alignItems:'center'}}><FcRules style={style}/><Typography ml={1}>Write</Typography></Box>
                 </Stack>
         </Box>
     );

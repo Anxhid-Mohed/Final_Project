@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import userModel from '../model/userSchema'
 import verificationModel from '../model/verificationToken';
 import { nodemailer } from '../utils/nodeMailer';
+import requestSchema from '../model/requestSchema';
 
 
 //---> Authentication-validation <---//
@@ -147,7 +148,26 @@ export const userSignin = async (req:Request,res:Response) => {
 }
 
 export const createrRequest = async(req:Request, res: Response) => {
-    console.log('userrrr',req.userId); 
+    console.log('userrrr',req.userId);
+    try {
+        const userId = req.userId;
+        const {categories}= req.body
+        const existReq = await requestSchema.findById(userId);
+        if(!existReq){
+            let obj = {
+                userId,
+                categories
+            }
+            await requestSchema.create(obj).then((response)=>{
+                console.log(response);
+                res.status(200).json({status:true,message:'request sended successfully'})
+            })
+        }else{
+            res.json({status:false,message:'You already send'})
+        }
+    } catch (error) {
+        res.status(500).json({status:false,message:'Internal Server'})
+    }
 }
 
 //---> Get user Datas <---//
