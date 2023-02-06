@@ -33,10 +33,9 @@ export const signin = async (formData:any) => {
     try {
         const {data} = await userApi.post('/signin',formData)
         return data;
-    } catch (err: any) {
-        console.log(err);
-        if(err instanceof AxiosError){
-          const errMessage = err?.response?.data?.message
+    } catch (error: any) {
+        if(error instanceof AxiosError){
+          const errMessage = error?.response?.data?.message
           return errMessage;
         }
     }

@@ -14,6 +14,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {useState} from 'react'
 import axios from 'axios';
+import { adminSignin } from '@/Apis/adminApi/AdminAuthRequests';
 
 function Copyright(props: any) {
   return (
@@ -60,66 +61,57 @@ export default function AdminSignIn() {
   //   }
   // })
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     let signinData = {
       email: data.get('email'),
       password: data.get('password'),
     };
-    if(signinData.email && signinData.password){
-      let regEmail =/^[a-zA-Z0-9.!#$%&'+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)$/
-      setRequired('');
-      if(regEmail.test(signinData.email.toString())){
-        setEmail(false)
-        setEmailErr('')
-        if(signinData.password.length >= 8){
-          setPassword(false)
-          setEmailErr('')
-
-          axios.post('http://localhost:3002/signin',{signinData}).then((response)=>{
-            if(response.data.status == "success"){
-
-              toast.success('Here we go..!', {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-              });
-              setTimeout(()=>{
-                router.push('/dashboard')
-              },1500)
-
-            }else{
-              toast.error('Oops..,Somthing went wrong', {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-              });
-            }
-            
-          })
-
-        }else{
-          setPassword(true)
-          setPasswordErr('Password must be at least 8 characters')
-        }
-      }else{
-        setEmail(true)
-        setEmailErr('Please enter valid email address')
-      }
-    }else{
+    if(!signinData.email || !signinData.password){
       setRequired('All feilds are required')
+      return;
     }
+    let regEmail =/^[a-zA-Z0-9.!#$%&'+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)$/
+    setRequired('');
+    if(!regEmail.test(signinData.email.toString())){
+      setEmail(true)
+      setEmailErr('Enter a valid email address')
+    } 
+    if(signinData.password.length < 8) {
+      setPassword(true)
+      setPasswordErr('Password must be at least 8 characters')
+    }
+        const response = await adminSignin(signinData)
+        if(typeof response === 'string') {
+          toast.error(response, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });  
+        }
+        if(response.auth == true){
+
+          toast.success(response.message, {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
+          setTimeout(()=>{
+            localStorage.setItem('adminToken',response.token)
+            router.push('/admin/users')
+          },1500)
+        }
   };
 
   return (
@@ -143,6 +135,7 @@ export default function AdminSignIn() {
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
+                {required && <Typography mb={0.5} sx={{color:'red',fontFamily:'sans-serif'}} align='center'>{required}</Typography>}
                 <TextField
                   required
                   fullWidth
@@ -150,6 +143,8 @@ export default function AdminSignIn() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  error={email}
+                  helperText={emailErr}
                   sx={{
                     "& .MuiInputLabel-root.Mui-focused": {color: '#191a19'},//styles the label
                     "& .MuiOutlinedInput-root.Mui-focused": {"& > fieldset": { borderColor: "#191a19" }},
@@ -167,6 +162,8 @@ export default function AdminSignIn() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  error={password}
+                  helperText={passwordErr}
                   sx={{
                     "& .MuiInputLabel-root.Mui-focused": {color: '#191a19'},
                     "& .MuiOutlinedInput-root.Mui-focused": {"& > fieldset": {borderColor: "#191a19"}},
@@ -194,7 +191,6 @@ export default function AdminSignIn() {
           </Box>
         </Box>
         <Copyright sx={{ mt: 5 }} />
-       
       </Container>
     </ThemeProvider>
   );

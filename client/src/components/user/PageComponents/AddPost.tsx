@@ -12,7 +12,7 @@ const AddPosts = () => {
                 <Box p={2} mb={2} sx={{color:'#333232',display:'flex'}}>
                     <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
                     <Typography sx={{
-                        backgroundColor:'#bfbdbd',
+                        backgroundColor:'#f7f7f7',
                         borderRadius:'20px',
                         // width:{xs:'400px',sm:'280',md:'380px'},
                         marginLeft:'10px',

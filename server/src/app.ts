@@ -20,7 +20,7 @@ await connectDb(String(DATABASE_URL))
 //middlewares
 app.use(cors({
     origin: ['http://localhost:3000'],
-    methods:["GET","POST"],
+    methods:["GET","POST","PATCH","DELETE"],
     credentials:true,
 }))
 app.use(logger("dev"))

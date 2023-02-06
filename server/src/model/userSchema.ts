@@ -23,11 +23,20 @@ const userSchema = new Schema({
     socialLink:{
         type:String,
     },
+    profile:{
+        type:String,
+    },
+    coverImage:{
+        type:String,
+    },
     isVerified:{
         type:Boolean,
         default:false,
     },
-
+    isBanned:{
+        type:Boolean,
+        default:false,
+    },
 
 },{timestamps:true})
 

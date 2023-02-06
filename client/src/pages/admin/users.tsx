@@ -9,8 +9,9 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import SideBar from '@/components/admin/SideBar/SideBar';
 import moment from 'moment';
-import { Avatar, Box, Button, Container, Grid, styled } from '@mui/material';
-import { usersList } from '@/Apis/adminApi/AdminListing';
+import { Container, Grid, styled } from '@mui/material';
+import { userBlocked, usersList } from '@/Apis/adminApi/AdminListing';
+import Row from '@/components/admin/RowComponent/Row';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -20,7 +21,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.body}`]: {
       fontSize: 14,
     },
-  }));
+}));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
@@ -32,57 +33,19 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-interface Data {
-  name: string;
-  code: string;
-  population: number;
-  size: number;
-  density: number;
-}
 
-function createData(
-  name: string,
-  code: string,
-  population: number,
-  size: number,
-): Data {
-  const density = population / size;
-  return { name, code, population, size, density };
-}
-
-const rows = [
-  createData('India', 'IN', 1324171354, 3287263),
-  createData('China', 'CN', 1403500365, 9596961),
-  createData('Italy', 'IT', 60483973, 301340),
-  createData('United States', 'US', 327167434, 9833520),
-  createData('Canada', 'CA', 37602103, 9984670),
-  createData('Australia', 'AU', 25475400, 7692024),
-  createData('Germany', 'DE', 83019200, 357578),
-  createData('Ireland', 'IE', 4857000, 70273),
-  createData('Mexico', 'MX', 126577691, 1972550),
-  createData('Japan', 'JP', 126317000, 377973),
-  createData('France', 'FR', 67022000, 640679),
-  createData('United Kingdom', 'GB', 67545757, 242495),
-  createData('Russia', 'RU', 146793744, 17098246),
-  createData('Nigeria', 'NG', 200962417, 923768),
-  createData('Brazil', 'BR', 210147125, 8515767),
-];
-
-export const getStaticProps = async(context:any) => {
+export const getServerSideProps = async() => {
   try {
     const response = await usersList();
-    // console.log('suiiiiiiiiiiiiiiiiiii',response.data);
     return {
       props : {users:response.data}
     }
   } catch (error) {
-    
-  }
-  // const res = await 
+    console.log(error);
+  } 
 }
 
 export default function UsersTable(users:any) {
-  console.log(users.users);
   
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -97,7 +60,7 @@ export default function UsersTable(users:any) {
   };
 
   return (
-   <Container>
+    <Container>
         <Grid container sx={{display:'flex',pt:11}}>
             <Grid md={2.5} sx={{display: { xs: 'none', sm: 'none', md: 'block'} }}>
                 <SideBar/>
@@ -119,27 +82,7 @@ export default function UsersTable(users:any) {
                               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                               .map((user:any) => {
                                   return (
-                                  <StyledTableRow key={user._id}>
-                                     
-                                      <StyledTableCell sx={{display:'flex',alignItems: 'center'}} component="th" scope="row" tabIndex={-1} key={user._id}>
-                                      <Avatar sx={{marginRight:'5px'}} alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                                        {user.name}
-                                      </StyledTableCell>
-                                      <StyledTableCell align="left">{user.email}</StyledTableCell>
-                                      <StyledTableCell align="left">{moment(user.createdAt).format("Do MMMM, YYYY")}</StyledTableCell>
-                                      <StyledTableCell align="center">
-                                          <Button sx={{ 
-                                             backgroundColor:'#f04f4f',
-                                             borderRadius:'9px' ,
-                                             boxShadow:3 , 
-                                             color:'#fff' , 
-                                             fontSize:'10px' , 
-                                             fontWeight:'800' ,
-                                              ":hover":{ backgroundColor:'#f04f4f'}}}>
-                                              block
-                                          </Button>
-                                      </StyledTableCell>
-                                  </StyledTableRow>
+                                    <Row key={user._id} user={user}/>
                                   );
                               })}
                           </TableBody>
@@ -148,7 +91,7 @@ export default function UsersTable(users:any) {
                   <TablePagination
                       rowsPerPageOptions={[10, 25, 100]}
                       component="div"
-                      count={rows.length}
+                      count={users.users.length}
                       rowsPerPage={rowsPerPage}
                       page={page}
                       onPageChange={handleChangePage}

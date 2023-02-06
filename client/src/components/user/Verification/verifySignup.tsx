@@ -20,35 +20,35 @@ export const VerifySignup = () => {
                     console.log(response);   
                     if(response.auth == true){
                         toast.success(response.message, {
-                        position: "top-center",
-                        autoClose: 1500,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    });
-                    setTimeout(()=>{
-                        localStorage.setItem('userToken',response.token)
-                        router.push('/dashboard')
-                    },1000)
+                            position: "top-center",
+                            autoClose: 1500,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                        setTimeout(()=>{
+                            localStorage.setItem('userToken',response.token)
+                            router.push('/dashboard')
+                        },1000)
                     }else{
-                    toast.error('Oops..,Somthing went wrong', {
-                        position: "top-right",
-                        autoClose: 3000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    });  
+                        toast.error('Oops..,Somthing went wrong', {
+                            position: "top-right",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });  
                     }
                 }
             )()
         }
-    },[id,token])
+    },[id, router, token])
 
     return ( 
         <>

@@ -52,7 +52,7 @@ const names = [
     'gamer',
     'Bloger',
     'story publisher',
-  ];
+ ];
 
   
 
@@ -63,7 +63,6 @@ const HomePage = () => {
     const [open2, setOpen2] = useState(false);
     const [opens, setOpens] = useState(false);
     const [category, setCategory] = useState('');
-    const [request, setRequest] = useState(false);
 
     const handleOpen = () => setOpens(true);
     const handleClose = () => setOpens(false);
@@ -73,14 +72,11 @@ const HomePage = () => {
 
     useEffect(()=>{
         let token = localStorage.getItem('userToken')
-        console.log(token);
-        
         if(token){
            (
                 async () => {
 
                     const response = await tokenVerification(token);
-                    console.log(response);
                     if(response.status == false){
                         router.push('/auth')
                     }else if (response.isAuthenticated){
@@ -98,9 +94,8 @@ const HomePage = () => {
         let token = localStorage.getItem('userToken') as string;
         const response = await createrRequest(category,token);
         if(response.status == true){
-            setRequest(true)
+            //toast
         }
-        console.log(response);
     }
 
     const style = { fontSize: "1.6em"}
@@ -124,7 +119,7 @@ const HomePage = () => {
 
                     <ProfilePage />
                     
-                    {!request && <Grid mt={3} xs={12}  p={3} boxShadow={1} sx={{borderRadius:'15px',border:'1px solid #dedede',lineBreak:'anywhere'}}>
+                    <Grid mt={3} xs={12}  p={3} boxShadow={1} sx={{borderRadius:'15px',border:'1px solid #dedede',lineBreak:'anywhere'}}>
                         <Box sx={{display:'flex',alignItems:'center'}}>
                             <FcIdea style={style}/>
                             <h3 style={{marginLeft:'5px'}}>Creator !</h3>
@@ -188,7 +183,7 @@ const HomePage = () => {
                             </Box>
 
                         </Grid>         
-                    </Grid>}
+                    </Grid>
                     
                     <Grid mt={3} xs={12}  p={3} boxShadow={1} sx={{borderRadius:'15px',border:'1px solid #dedede'}}>
 

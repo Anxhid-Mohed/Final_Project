@@ -29,8 +29,10 @@ export const verifyAuth = async(req:Request,res:Response) => {
                             username:null,
                             about:null,
                             socialLink:null,
+                            profile:null,
+                            coverImage:null,
                             isVerified:false,
-                            isAuthenticated:false
+                            isBanned:false,
                         })
                         await doc.save()
                         const user = await userModel.findOne({email:email})
@@ -163,7 +165,7 @@ export const createrRequest = async(req:Request, res: Response) => {
                 res.status(200).json({status:true,message:'request sended successfully'})
             })
         }else{
-            res.json({status:false,message:'You already send'})
+            res.json({status:false,message:'You already sended'})
         }
     } catch (error) {
         res.status(500).json({status:false,message:'Internal Server'})
