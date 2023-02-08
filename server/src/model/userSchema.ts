@@ -23,17 +23,31 @@ const userSchema = new Schema({
     socialLink:{
         type:String,
     },
+    category:{
+        type:String,
+        default:null,
+    },
     profile:{
         type:String,
+        default:null
     },
     coverImage:{
         type:String,
+        default:null
     },
     isVerified:{
         type:Boolean,
         default:false,
     },
     isBanned:{
+        type:Boolean,
+        default:false,
+    },
+    creator:{
+        type:Boolean,
+        default:false,
+    },
+    disabled:{
         type:Boolean,
         default:false,
     },

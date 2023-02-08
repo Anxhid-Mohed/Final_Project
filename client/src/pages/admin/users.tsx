@@ -11,7 +11,7 @@ import SideBar from '@/components/admin/SideBar/SideBar';
 import moment from 'moment';
 import { Container, Grid, styled } from '@mui/material';
 import { userBlocked, usersList } from '@/Apis/adminApi/AdminListing';
-import Row from '@/components/admin/RowComponent/Row';
+import Row from '@/components/admin/RowComponent/UsersRow';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {

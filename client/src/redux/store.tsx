@@ -1,9 +1,9 @@
 import {configureStore} from '@reduxjs/toolkit'
-import userAuth from './userAuth'
+import  userData  from '../redux/userData'
 
 
 const store = configureStore(
-    {reducer:{userInfo:userAuth.reducer}}
+    {reducer:{userData:userData.reducer}}
 );
 
 export default store;

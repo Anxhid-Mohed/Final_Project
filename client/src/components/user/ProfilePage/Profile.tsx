@@ -2,7 +2,22 @@
 import { Avatar, Box, Button, Grid, Stack, Typography } from "@mui/material";
 import {IoSettingsOutline } from 'react-icons/io5'
 
-const ProfilePage = () => {
+const ProfilePage:React.FC<{userData?: {
+    userId: string,
+    email:string,
+    name:string,
+    username:string,
+    about:string,
+    socialLink:string,
+    profile:string,
+    coverImage:string,
+    category:string,
+    isVerified:boolean,
+    isBanned:boolean,
+    disabled:boolean,
+    isAuthenticated:boolean
+}}> = ({userData}) => {
+    console.log(userData);
     const style = { color:'#303030', fontSize: "1.8em" }
     return (
         <>
@@ -12,7 +27,6 @@ const ProfilePage = () => {
                         <Grid xs={1} >
                             <Avatar
                                 alt="Remy Sharp"
-                                src="https://cdnimg.vietnamplus.vn/uploaded/qfsqy/2022_12_19/ttxvn_messi1.jpg"
                                 sx={{ width: 56, height: 56 }}
                             />
                         </Grid>
@@ -33,7 +47,7 @@ const ProfilePage = () => {
                                 borderRadius: 3,
                                 color:'#000',
                                 width:{sm:'8.1rem',md:'8.2rem'},
-                            }}>Edit Profile</Button>
+                            }} href={'/manage'}>Edit Profile</Button>
                         </Box>
                         
                         <Box m={0.3}>

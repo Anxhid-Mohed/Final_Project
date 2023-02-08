@@ -28,8 +28,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 const Row = (user: any) => {
     const [userBanned, setUserBanned] = useState(user.user.isBanned)
-    console.log(user)
-
+    
     return (
         <StyledTableRow key={user._id}>
             <StyledTableCell

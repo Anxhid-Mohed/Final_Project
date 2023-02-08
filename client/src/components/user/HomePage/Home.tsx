@@ -1,3 +1,5 @@
+import React from 'react';
+import router from 'next/router';
 import {useEffect, useState} from 'react';
 import { Box, Button, Collapse, Container, FormControl, Grid, InputLabel, ListItem, ListItemIcon, ListItemText, MenuItem, Modal, Select, SelectChangeEvent, Typography } from "@mui/material";
 import Alert from '@mui/material/Alert';
@@ -6,10 +8,14 @@ import Stack from '@mui/material/Stack';
 import {FcIdea,FcCurrencyExchange,FcLikePlaceholder,FcBullish} from 'react-icons/fc/';
 import {IoChevronDown} from 'react-icons/io5';
 import ProfilePage from "../ProfilePage/Profile";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { createrRequest } from '@/Apis/userApi/userRequests';
-import router from 'next/router';
 import { tokenVerification } from '@/Apis/userApi/userAuthRequest';
-import React from 'react';
+import { useDispatch } from 'react-redux/es/exports';
+import { useSelector } from 'react-redux/es/exports';
+import { userActions } from '@/redux/userData';
+import { SuccessToast } from '@/utils/toast';
 
 function Copyright(props:any) {
     return (
@@ -63,6 +69,8 @@ const HomePage = () => {
     const [open2, setOpen2] = useState(false);
     const [opens, setOpens] = useState(false);
     const [category, setCategory] = useState('');
+    // const { userData } = useSelector((state:any)=>state.userData.user)
+    // const dispatch = useDispatch()
 
     const handleOpen = () => setOpens(true);
     const handleClose = () => setOpens(false);
@@ -77,10 +85,14 @@ const HomePage = () => {
                 async () => {
 
                     const response = await tokenVerification(token);
-                    if(response.status == false){
+                    console.log(response);
+                    
+                    if(response.status == false || response.isBanned === true){
                         router.push('/auth')
                     }else if (response.isAuthenticated){
-                        router.push('/dashboard') 
+                        router.push('/dashboard')
+                        console.log(response);
+                        // dispatch(userActions.userDetails(response))
                     }
                 }
             )()
@@ -94,7 +106,16 @@ const HomePage = () => {
         let token = localStorage.getItem('userToken') as string;
         const response = await createrRequest(category,token);
         if(response.status == true){
-            //toast
+            toast.success(response.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
         }
     }
 
@@ -102,6 +123,7 @@ const HomePage = () => {
     return (  
         <>
             <Container maxWidth='lg' >
+            <ToastContainer/>
                 <Grid xs={12} sx={{width:'100%'}}>
                     <h3 style={{marginTop:'14px',fontWeight:'800'}}>Home Page</h3>
 

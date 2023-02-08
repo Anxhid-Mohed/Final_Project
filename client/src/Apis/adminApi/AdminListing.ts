@@ -44,3 +44,25 @@ export const userRequests = async () => {
         console.log(error);
     }
 }
+
+//---> Request Approval <---//
+export const requestApproval = async (reqId:string) => {
+    try {
+        const {data} = await adminApi.patch(`/approve?id=${reqId}`)
+        console.log(data);
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+//---> Request Rejection <---//
+export const requestRejection = async (reqId:string) => {
+    try {
+        const {data} = await adminApi.delete(`/reject?id=${reqId}`)
+        console.log(data);
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+}

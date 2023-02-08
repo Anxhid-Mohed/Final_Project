@@ -9,11 +9,10 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import SideBar from '@/components/admin/SideBar/SideBar';
 import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
 import moment from 'moment';
 import { Avatar, Box, Button, Container, Grid, styled } from '@mui/material';
-import { request } from 'https';
 import { userRequests } from '@/Apis/adminApi/AdminListing';
+import RequestRows from '@/components/admin/RowComponent/RequestRow';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -74,7 +73,7 @@ export default function Requests(requests:any) {
                             <TableHead style={{borderRadius:'10px'}}>
                                 <TableRow>
                                     <StyledTableCell sx={{ borderTopLeftRadius: '12px' , borderBottomLeftRadius: '12px'}}>User Name</StyledTableCell>
-                                    <StyledTableCell align="left">Email</StyledTableCell>
+                                    <StyledTableCell align="left">Categories</StyledTableCell>
                                     <StyledTableCell align="left">Request Date</StyledTableCell>
                                     <StyledTableCell sx={{ borderBottomRightRadius: '12px' , borderTopRightRadius: '12px'}} align="center">Actions</StyledTableCell>
                                 </TableRow>
@@ -84,36 +83,7 @@ export default function Requests(requests:any) {
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((request:any) => {
                                     return (
-                                    <StyledTableRow key={ request._id}>
-                                        <StyledTableCell sx={{display:'flex',alignItems: 'center'}} component="th" scope="row" tabIndex={-1} key={request._id}>
-                                            <Avatar sx={{marginRight:'5px'}} alt="Remy Sharp" src='sdvdfv7' />
-                                            {request.userId.name}
-                                        </StyledTableCell>
-                                        <StyledTableCell align="left">{ request.categories}</StyledTableCell>
-                                        <StyledTableCell align="left">{moment(request.createdAt).format("Do MMMM, YYYY")}</StyledTableCell>
-                                        <StyledTableCell  align="right">
-                                            <Button 
-                                            sx={{ 
-                                                backgroundColor:'#6aba4d',
-                                                borderRadius:'9px' ,
-                                                boxShadow:3 , 
-                                                color:'#fff' , 
-                                                fontSize:'10px' , 
-                                                fontWeight:'800' ,
-                                                mr:{md:3,sm:3},
-                                                ":hover":{ backgroundColor:'#6aba4d'}}}
-                                            >
-                                                Approve
-                                            </Button>
-                                            <IconButton
-                                                aria-label="close"
-                                                color="inherit"
-                                                size="small"
-                                                >
-                                                <CloseIcon fontSize="inherit" />
-                                            </IconButton>
-                                        </StyledTableCell>
-                                    </StyledTableRow>
+                                     <RequestRows key={request._id} request={request}/>
                                     )
                                 }) 
                             }  

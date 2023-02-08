@@ -46,32 +46,32 @@ export const usersList = async (req:Request,res:Response) => {
         console.log(users);
         res.status(200).json({status:true,data:users,message:'get users successfully'}); 
     } catch (error) {
-        console.log(error);
+        res.status(500).json({message:'Internal Server Error'})
     }
 }
 
 
 //---> Users Blocking <---// 
-export const usersBlockings = async (req:Request,Res:Response) => {
+export const usersBlockings = async (req:Request,res:Response) => {
     try {
         const userId = req.query.id
         console.log(userId)
         await userModel.findOneAndUpdate({_id:userId},{isBanned:true})
-        Res.status(200).json({status:true,message:'user blocked successfully'}); 
+        res.status(200).json({status:true,message:'user blocked successfully'}); 
     } catch (error) {
-        console.log(error);
+        res.status(500).json({message:'Internal Server Error'})
     }
 }
 
 //---> Users UnBlocking <---// 
-export const usersUnBlockings = async (req:Request,Res:Response) => {
+export const usersUnBlockings = async (req:Request,res:Response) => {
     try {
         const userId = req.query.id
         console.log(userId)
         await userModel.findOneAndUpdate({_id:userId},{isBanned:false})
-        Res.status(200).json({status:true,message:'user unblocked successfully'}); 
+        res.status(200).json({status:true,message:'user unblocked successfully'}); 
     } catch (error) {
-        console.log(error);
+        res.status(500).json({message:'Internal Server Error'})
     }
 }
 
@@ -80,9 +80,51 @@ export const usersUnBlockings = async (req:Request,Res:Response) => {
 export const requestsList = async (req:Request,res:Response) => {
     try {
         const requests = await requestsModel.find().populate('userId')
-        console.log(requests);
-        res.status(200).json({status:true,data:requests,message:'get requests successfully'}); 
+        if(requests){
+            res.status(200).json({status:true,data:requests,message:'get requests successfully'}); 
+        }else{
+            res.json({status:false,message:'No requests found'})
+        }
     } catch (error) {
-        console.log(error);
+        res.status(500).json({message:'Internal Server Error'})
+    }
+}
+
+//---> Requests Approval <---//
+export const requestsApproval = async (req:Request,res:Response) => {
+    try { 
+        const requestId = req.query.id;
+        const requester = await requestsModel.findById(requestId);
+        if(requester){
+            const userId = requester.userId;
+            const user = await userModel.findById(userId)
+            if(user){
+                await userModel.findOneAndUpdate({_id:userId},{category:requester.categories,creator:true})
+                await requestsModel.findByIdAndDelete({_id:requester._id})
+
+                res.status(200).json({status:true,message:'Your request has been approved'})
+            }else{
+                await requestsModel.findByIdAndDelete({_id:requester._id})
+                res.json({status:false,message:'Requested user does not exist'})
+            }
+        }else{
+            res.json({status:false,message:'Requested user does not exist'})
+        }
+    } catch (error) {
+        res.status(500).json({message:'Internal Server Error'})
+    }
+}
+
+//---> Requests Rejections <---//
+export const requestsRejection = async (req: Request, res: Response) => {
+    try {
+        const requestId = req.query.id;
+        const requester = await requestsModel.findById(requestId);
+        if(requester){
+            await requestsModel.findByIdAndDelete({_id:requester._id})
+            res.status(200).json({status:true,message:'request rejected successfully'})
+        }    
+    } catch (error) {
+        res.status(500).json({message:'Internal Server Error'})
     }
 }

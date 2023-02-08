@@ -9,7 +9,6 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useEffect} from 'react';
 import { useRouter } from 'next/router';
-import { userApi } from '@/utils/apis';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {useState} from 'react'
@@ -51,7 +50,7 @@ export default function SignIn() {
         async () => {
           const response = await tokenVerification(token);
           console.log(response);
-          if(response.status == false){
+          if(response.status == false || response.isBanned === true){
             router.push('/auth')
           }else if (response.isAuthenticated){
             router.push('/dashboard') 

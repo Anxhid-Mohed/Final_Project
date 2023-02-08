@@ -1,5 +1,5 @@
 import express ,{Router} from 'express'
-import {userSignup,verifyAuth,userSignin,accountVerification,getDetails,createrRequest} from '../../controller/userController'
+import {userSignup,verifyAuth,userSignin,accountVerification,getDetails,createrRequest, profileManagement} from '../../controller/userController'
 import { verifyToken } from '../..//middleware/verifyToken'
 const router : Router = express.Router()
 
@@ -12,6 +12,7 @@ router.post('/signin',userSignin)
 
 router.post('/verify-token',verifyToken,getDetails)
 router.post('/request',verifyToken,createrRequest)
+router.patch('/manage',profileManagement)
 
 export default router
 

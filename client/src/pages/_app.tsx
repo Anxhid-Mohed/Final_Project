@@ -1,13 +1,14 @@
+// import { Provider } from 'react-redux';
+// import store  from '../redux/store'
+import '@/styles/globals.css';
 import type { AppProps } from 'next/app'
-import '@/styles/globals.css'
-import { AuthContext } from '@/context/Context'
-import { useState } from 'react'
+
+
 
 export default function App({ Component, pageProps }: AppProps) {
-  const [userDetails, setUserDetails]= useState({})
   return(
-    <AuthContext.Provider value={{userDetails:userDetails, setUserDetails:setUserDetails}}>
+    // <Provider store={store}>
       <Component {...pageProps} />
-    </AuthContext.Provider>    
+    // </Provider>
   )
 }

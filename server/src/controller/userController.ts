@@ -114,6 +114,8 @@ export const accountVerification = async (req:Request,res:Response) => {
     }
     
 }
+
+
 //---> User Signin <---//
 export const userSignin = async (req:Request,res:Response) => {
 
@@ -149,6 +151,8 @@ export const userSignin = async (req:Request,res:Response) => {
     
 }
 
+
+//---> Creator Request <---//
 export const createrRequest = async(req:Request, res: Response) => {
     console.log('userrrr',req.userId);
     try {
@@ -172,11 +176,32 @@ export const createrRequest = async(req:Request, res: Response) => {
     }
 }
 
+
+
+//---> User Profile Management <---//
+export const profileManagement = async (req:Request,res:Response) => {
+    try {
+        const userData  = {...req.body}
+        console.log(userData);
+        await userModel.findByIdAndUpdate(userData.userId,{
+            name:userData.name,
+            about:userData.about,
+            category:userData.category,
+            socialLink:userData.social,
+            profile:userData.profile
+        })
+        res.status(200).json({status:true,message:'profile updated successfully'})
+    } catch (error) {
+        res.status(500).json({status:false,message:'Internal Server'})
+    }
+}
+
+
+
 //---> Get user Datas <---//
 export const getDetails = async (req:Request,res:Response) => {
     try {
         const userId = req.userId
-        console.log("GET",userId);
         const userData = await userModel.findById(userId)
         console.log(userData);
         
@@ -189,9 +214,17 @@ export const getDetails = async (req:Request,res:Response) => {
                 'username':userData.username,
                 'about':userData.about,
                 'socialLink':userData.socialLink,
+                'profile':userData.profile,
+                'coverImage':userData.coverImage,
+                'category':userData.category,
                 'isVerified':userData.isVerified,
+                'isBanned':userData.isBanned,
+                'creator':userData.creator,
+                'disabled':userData.disabled,
                 'isAuthenticated':true
             }) 
+        }else{
+            res.json({data:undefined,message: 'User not found'});
         }
     } catch (error) {
         const message = error instanceof Error ? error.message : "Unknown error."

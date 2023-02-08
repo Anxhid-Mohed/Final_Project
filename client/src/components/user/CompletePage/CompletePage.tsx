@@ -11,7 +11,6 @@ import { userSignupData } from "@/Apis/userApi/userAuthRequest";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
-import { AuthContext } from "@/context/Context";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useContext, useState } from "react";
 import axios from "axios";
@@ -40,7 +39,6 @@ const theme = createTheme({
 });
 
 export default function CompletePage() {
-  const { userDetails, setUserDetails }: any = useContext(AuthContext);
   const router = useRouter();
 
   const [name, setName] = useState(false);
@@ -84,7 +82,6 @@ export default function CompletePage() {
             if (regUrl.test(social.toString())) {
               setSocial(false);
               setSocailErr("");
-              setUserDetails(obj);
 
               const response = await userSignupData(obj);
               console.log("here", response);
