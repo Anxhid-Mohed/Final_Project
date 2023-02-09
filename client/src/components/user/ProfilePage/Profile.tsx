@@ -17,8 +17,9 @@ const ProfilePage:React.FC<{userData?: {
     disabled:boolean,
     isAuthenticated:boolean
 }}> = ({userData}) => {
-    console.log(userData);
+    
     const style = { color:'#303030', fontSize: "1.8em" }
+    const URL = process.env.NEXT_PUBLIC_USER_API as string
     return (
         <>
             <Grid mt={3} p={3} boxShadow={1} sx={{borderRadius:'15px',border:'1px solid #dedede'}}>
@@ -26,14 +27,15 @@ const ProfilePage:React.FC<{userData?: {
                     <Grid xs={4}  sm={7} md={8} sx={{display:{xs:'block', sm:'block' ,md:'flex'}}}>
                         <Grid xs={1} >
                             <Avatar
+                                src={userData ? userData.profile :''}
                                 alt="Remy Sharp"
                                 sx={{ width: 56, height: 56 }}
                             />
                         </Grid>
 
                         <Grid xs={7} sx={{  pl:{ md:5 } }} >
-                            <Typography variant="h5" component="h2" sx={{ fontSize:{ xs:'10px',sm:'15px', md:'20px'} }}>Goat Messi</Typography>
-                            <Typography sx={{ fontSize:{ xs:'10px' , md:'15px'}, display:{xs:'none' ,sm:'block' ,md:'flex'} }}><a href="">http://localhost:3000/pagevxvxcvxv</a></Typography>
+                            <Typography variant="h5" component="h2" sx={{ fontSize:{ xs:'10px',sm:'15px', md:'20px'} }}>{userData?.name}</Typography>
+                            <Typography sx={{ fontSize:{ xs:'10px' , md:'15px'}, display:{xs:'none' ,sm:'block' ,md:'flex'} }}><a href="">{userData?.username}</a></Typography>
                         </Grid>
                     </Grid>
                     

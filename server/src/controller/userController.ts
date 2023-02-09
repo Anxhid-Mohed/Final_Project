@@ -196,7 +196,37 @@ export const profileManagement = async (req:Request,res:Response) => {
     }
 }
 
+//---> User Page Management <---//
+export const userPage = async (req:Request,res:Response) => {
+    try {
+        const username = req.query.username;
+        const user = await userModel.findOne({username:username})
+        console.log(user);
+        if(user){
+            res.status(200).json({status:true,data:user,message:'success'})
+        }else{
+            res.json({status:false,message:'something went wrong'})
+        }
+    } catch (error) {
+        res.status(500).json({status:false,message:'Internal Server'})
+    }
+}
 
+
+export const uploadCoverImage = async (req:Request,res:Response) => {
+    try {
+        const userId = req.userId
+        const image  = req.body.image
+        if(image && userId){
+            await userModel.findByIdAndUpdate({_id:userId},{coverImage:image})
+            res.status(200).json({status:true,message:'cover image successfully uploaded'})
+        }else{
+            res.json({status:false,message:'image not found'})
+        }
+    } catch (error) {
+        res.status(500).json({status:false,message:'Internal Server'})
+    }
+}
 
 //---> Get user Datas <---//
 export const getDetails = async (req:Request,res:Response) => {

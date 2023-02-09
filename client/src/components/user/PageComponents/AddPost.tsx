@@ -1,7 +1,7 @@
 import { Avatar, Box, Button, Chip, Stack, Typography } from "@mui/material";
 import {FcAddImage,FcVideoCall ,FcRules } from 'react-icons/fc';
 
-const AddPosts = () => {
+const AddPosts = (data:any) => {
     const style = { fontSize: "1.6em" }
     return (  
         <Box boxShadow={2} sx={{
@@ -10,7 +10,7 @@ const AddPosts = () => {
             pr:'15px'
             }}>
                 <Box p={2} mb={2} sx={{color:'#333232',display:'flex'}}>
-                    <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                    <Avatar alt="DP" src={data ? data.data.profile:'DP'} />
                     <Typography sx={{
                         backgroundColor:'#f7f7f7',
                         borderRadius:'20px',
@@ -19,7 +19,7 @@ const AddPosts = () => {
                         lineHeight:'2.5rem',
                         textAlign:'center',
                         width:'100%'
-                    }}><a style={{marginTop:'10px' , fontSize:'13px'}}>Hy i just started a page here , </a></Typography>
+                    }}><a style={{marginTop:'10px' , fontSize:'13px'}}>Write a Quick Update</a></Typography>
                     <br />
                     
                 </Box>

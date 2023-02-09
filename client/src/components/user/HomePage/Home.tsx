@@ -12,10 +12,10 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { createrRequest } from '@/Apis/userApi/userRequests';
 import { tokenVerification } from '@/Apis/userApi/userAuthRequest';
-import { useDispatch } from 'react-redux/es/exports';
-import { useSelector } from 'react-redux/es/exports';
-import { userActions } from '@/redux/userData';
-import { SuccessToast } from '@/utils/toast';
+import { useDispatch, useSelector } from 'react-redux';
+import { userDetails } from '@/redux/userSlice';
+import SideBar from '../SideBar/SideBar';
+
 
 function Copyright(props:any) {
     return (
@@ -69,8 +69,8 @@ const HomePage = () => {
     const [open2, setOpen2] = useState(false);
     const [opens, setOpens] = useState(false);
     const [category, setCategory] = useState('');
-    // const { userData } = useSelector((state:any)=>state.userData.user)
-    // const dispatch = useDispatch()
+    const { user } = useSelector((state:any)=>state.userInfo)
+    const dispatch = useDispatch();
 
     const handleOpen = () => setOpens(true);
     const handleClose = () => setOpens(false);
@@ -90,9 +90,9 @@ const HomePage = () => {
                     if(response.status == false || response.isBanned === true){
                         router.push('/auth')
                     }else if (response.isAuthenticated){
-                        router.push('/dashboard')
+                        dispatch(userDetails(response))
+                        // router.push('/dashboard')
                         console.log(response);
-                        // dispatch(userActions.userDetails(response))
                     }
                 }
             )()
@@ -121,125 +121,132 @@ const HomePage = () => {
 
     const style = { fontSize: "1.6em"}
     return (  
-        <>
-            <Container maxWidth='lg' >
-            <ToastContainer/>
-                <Grid xs={12} sx={{width:'100%'}}>
-                    <h3 style={{marginTop:'14px',fontWeight:'800'}}>Home Page</h3>
-
-                    <Grid mt={3} xs={12}>
-                        <Stack sx={{ width: '100%' ,textAlign:'center'}} spacing={2}>
-                            <Alert
-                                iconMapping={{
-                                success: <CheckCircleOutlineIcon fontSize="inherit" />,
-                                }}
-                            >
-                                Your official creater now...
-                            </Alert>
-                        </Stack>
+        <>  
+            <Grid container sx={{display:'flex',mt:11}}>
+                    <Grid md={2.5} sx={{display: { xs: 'none', sm: 'none', md: 'block'} }}>
+                        <SideBar userData={user?.username}/>
                     </Grid>
+                    <Grid xs={12} sm={12} md={9.5} sx={{lineBreak:'anywhere'}}>
+                        <Container maxWidth='lg' >
+                            <ToastContainer/>
+                                <Grid xs={12} sx={{width:'100%'}}>
+                                    <h3 style={{marginTop:'14px',fontWeight:'800'}}>Home Page</h3>
 
-                    <ProfilePage />
-                    
-                    <Grid mt={3} xs={12}  p={3} boxShadow={1} sx={{borderRadius:'15px',border:'1px solid #dedede',lineBreak:'anywhere'}}>
-                        <Box sx={{display:'flex',alignItems:'center'}}>
-                            <FcIdea style={style}/>
-                            <h3 style={{marginLeft:'5px'}}>Creator !</h3>
-                        </Box>
+                                    <Grid mt={3} xs={12}>
+                                        <Stack sx={{ width: '100%' ,textAlign:'center'}} spacing={2}>
+                                            <Alert
+                                                iconMapping={{
+                                                success: <CheckCircleOutlineIcon fontSize="inherit" />,
+                                                }}
+                                            >
+                                                Your official creater now...
+                                            </Alert>
+                                        </Stack>
+                                    </Grid>
 
-                        <Grid mt={1} xs={12}>
-                            <Typography>If you want to become a creator... ?</Typography>
-                            <Typography sx={{fontSize:'15px',color:'#4e4f4f',fontWeight:'500'}}>
-                                You needs permission to access the creaters features in yours account that only an admins  can grand.
-                                Please ask an admin to grand permission :)
-                            </Typography>
-                            <Box>
-                                <Button onClick={handleOpen} sx={{
-                                    backgroundColor:'#a2fc8d',
-                                    "&:hover": { backgroundColor: "#a2fc8d"},
-                                    textTransform: 'none',
-                                    borderRadius: 3,
-                                    color:'#000',
-                                    mt:2,
-                                    width:{sm:'8.1rem',md:'8.2rem'},
-                                    }}>
-                                    Request
-                                </Button>
-                                <Modal
-                                    open={opens}
-                                    onClose={handleClose}
-                                    aria-labelledby="modal-modal-title"
-                                    aria-describedby="modal-modal-description"
-                                >
-                                    <Box sx={styles}>
-                                        <Typography id="modal-modal-title" variant="h6" component="h2">
-                                           Request form 
-                                        </Typography>
-                                        <Box mt={2} sx={{ minWidth: 120 }}>
-                                            <FormControl fullWidth>
-                                                <InputLabel id="demo-simple-select-label">Categories</InputLabel>
-                                                <Select 
-                                                    labelId="demo-simple-select-label"
-                                                    id="demo-simple-select"
-                                                    value={category}
-                                                    label="Caregories"
-                                                    onChange={handleChange}
-                                                    MenuProps={MenuProps}
-                                                >
-                                                    {names.map((name) =>(
-                                                        <MenuItem key={name} value={name}>
-                                                            {name}
-                                                        </MenuItem>
-                                                    ))}
-                                                </Select>
-                                            </FormControl>
+                                    <ProfilePage userData = {user}/>
+                                    
+                                    <Grid mt={3} xs={12}  p={3} boxShadow={1} sx={{borderRadius:'15px',border:'1px solid #dedede',lineBreak:'anywhere'}}>
+                                        <Box sx={{display:'flex',alignItems:'center'}}>
+                                            <FcIdea style={style}/>
+                                            <h3 style={{marginLeft:'5px'}}>Creator !</h3>
                                         </Box>
-                                        <Typography mt={1} sx={{fontSize:'14px',color:'#4e4f4f'}}>
-                                           Admin may take time for your request approval
-                                        </Typography>
-                                        <Button fullWidth onClick={handleSubmit}>
-                                            Send
-                                        </Button>
-                                    </Box>
-                                </Modal>
-                            </Box>
 
-                        </Grid>         
-                    </Grid>
-                    
-                    <Grid mt={3} xs={12}  p={3} boxShadow={1} sx={{borderRadius:'15px',border:'1px solid #dedede'}}>
+                                        <Grid mt={1} xs={12}>
+                                            <Typography>If you want to become a creator... ?</Typography>
+                                            <Typography sx={{fontSize:'15px',color:'#4e4f4f',fontWeight:'500'}}>
+                                                You needs permission to access the creaters features in yours account that only an admins  can grand.
+                                                Please ask an admin to grand permission :)
+                                            </Typography>
+                                            <Box>
+                                                <Button onClick={handleOpen} sx={{
+                                                    backgroundColor:'#a2fc8d',
+                                                    "&:hover": { backgroundColor: "#a2fc8d"},
+                                                    textTransform: 'none',
+                                                    borderRadius: 3,
+                                                    color:'#000',
+                                                    mt:2,
+                                                    width:{sm:'8.1rem',md:'8.2rem'},
+                                                    }}>
+                                                    Request
+                                                </Button>
+                                                <Modal
+                                                    open={opens}
+                                                    onClose={handleClose}
+                                                    aria-labelledby="modal-modal-title"
+                                                    aria-describedby="modal-modal-description"
+                                                >
+                                                    <Box sx={styles}>
+                                                        <Typography id="modal-modal-title" variant="h6" component="h2">
+                                                        Request form 
+                                                        </Typography>
+                                                        <Box mt={2} sx={{ minWidth: 120 }}>
+                                                            <FormControl fullWidth>
+                                                                <InputLabel id="demo-simple-select-label">Categories</InputLabel>
+                                                                <Select 
+                                                                    labelId="demo-simple-select-label"
+                                                                    id="demo-simple-select"
+                                                                    value={category}
+                                                                    label="Caregories"
+                                                                    onChange={handleChange}
+                                                                    MenuProps={MenuProps}
+                                                                >
+                                                                    {names.map((name) =>(
+                                                                        <MenuItem key={name} value={name}>
+                                                                            {name}
+                                                                        </MenuItem>
+                                                                    ))}
+                                                                </Select>
+                                                            </FormControl>
+                                                        </Box>
+                                                        <Typography mt={1} sx={{fontSize:'14px',color:'#4e4f4f'}}>
+                                                        Admin may take time for your request approval
+                                                        </Typography>
+                                                        <Button fullWidth onClick={handleSubmit}>
+                                                            Send
+                                                        </Button>
+                                                    </Box>
+                                                </Modal>
+                                            </Box>
 
-                            <h3 style={{marginLeft:'5px'}}>Guides here</h3>
-    
-                            <Grid p={4} mt={2} sx={{borderRadius:'15px',border:'1px solid #dedede'}}>
-                                <Box mb={1} sx={{display:'flex',alignItems:'center',cursor:'pointer'}} onClick={()=>setOpen(!open)}>
-                                    <FcCurrencyExchange style={style}/>
-                                    <Typography ml={2} sx={{fontSize:{sx:'10px',sm:'0.8rem'}}}> More ways to earn</Typography>
-                                    <IoChevronDown style={{marginLeft: 'auto'}}/>
-                                </Box>
-                                    {open && <h5>In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available.</h5>}
-                            </Grid>
-                            <Grid p={4} mt={2} sx={{borderRadius:'15px',border:'1px solid #dedede'}}>
-                                <Box mb={1} sx={{display:'flex',alignItems:'center',cursor:'pointer'}} onClick={()=>setOpen1(!open1)}>
-                                    <FcLikePlaceholder style={style}/>
-                                    <Typography ml={2} sx={{fontSize:{sx:'10px',sm:'0.8rem'}}}>Make more suppoters</Typography>
-                                    <IoChevronDown style={{marginLeft: 'auto'}}/>
-                                </Box>
-                                    {open1 && <h5>In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available.</h5>}
-                            </Grid>
-                            <Grid p={4} mt={2} sx={{borderRadius:'15px',border:'1px solid #dedede'}}>
-                                <Box mb={1} sx={{display:'flex',alignItems:'center',cursor:'pointer'}} onClick={()=>setOpen2(!open2)}>
-                                    <FcBullish style={style}/>
-                                    <Typography ml={2} sx={{fontSize:{sm:'0.7rem'}}}>Scale your account</Typography>
-                                    <IoChevronDown style={{marginLeft: 'auto'}}/>
-                                </Box>
-                                    {open2 && <h5>In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available.</h5>}
-                            </Grid>
-                    </Grid>
-                    <Copyright/>
+                                        </Grid>         
+                                    </Grid>
+                                    
+                                    <Grid mt={3} xs={12}  p={3} boxShadow={1} sx={{borderRadius:'15px',border:'1px solid #dedede'}}>
+
+                                        <h3 style={{marginLeft:'5px'}}>Guides here</h3>
+                
+                                        <Grid p={4} mt={2} sx={{borderRadius:'15px',border:'1px solid #dedede'}}>
+                                            <Box mb={1} sx={{display:'flex',alignItems:'center',cursor:'pointer'}} onClick={()=>setOpen(!open)}>
+                                                <FcCurrencyExchange style={style}/>
+                                                <Typography ml={2} sx={{fontSize:{sx:'10px',sm:'0.8rem'}}}> More ways to earn</Typography>
+                                                <IoChevronDown style={{marginLeft: 'auto'}}/>
+                                            </Box>
+                                                {open && <h5>In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available.</h5>}
+                                        </Grid>
+                                        <Grid p={4} mt={2} sx={{borderRadius:'15px',border:'1px solid #dedede'}}>
+                                            <Box mb={1} sx={{display:'flex',alignItems:'center',cursor:'pointer'}} onClick={()=>setOpen1(!open1)}>
+                                                <FcLikePlaceholder style={style}/>
+                                                <Typography ml={2} sx={{fontSize:{sx:'10px',sm:'0.8rem'}}}>Make more suppoters</Typography>
+                                                <IoChevronDown style={{marginLeft: 'auto'}}/>
+                                            </Box>
+                                                {open1 && <h5>In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available.</h5>}
+                                        </Grid>
+                                        <Grid p={4} mt={2} sx={{borderRadius:'15px',border:'1px solid #dedede'}}>
+                                            <Box mb={1} sx={{display:'flex',alignItems:'center',cursor:'pointer'}} onClick={()=>setOpen2(!open2)}>
+                                                <FcBullish style={style}/>
+                                                <Typography ml={2} sx={{fontSize:{sm:'0.7rem'}}}>Scale your account</Typography>
+                                                <IoChevronDown style={{marginLeft: 'auto'}}/>
+                                            </Box>
+                                                {open2 && <h5>In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available.</h5>}
+                                        </Grid>
+                                    </Grid>
+                            <Copyright/>
+                        </Grid>
+                    </Container>
                 </Grid>
-
-            </Container>
+            </Grid>
+ 
         </>
     );
 }

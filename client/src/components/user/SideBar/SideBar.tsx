@@ -12,22 +12,23 @@ import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import SettingsIcon from '@mui/icons-material/Settings';
 import InfoIcon from '@mui/icons-material/Info';
 import LogoutIcon from '@mui/icons-material/Logout';
-import Router from 'next/router';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 
 
-const SideBar = () => {
-
+const SideBar = ({userData}:any) => {
+    console.log('hooyy',userData);
+    const router = useRouter()
     const handleClick = () => {
         localStorage.removeItem('userToken');
-        Router.push('/auth');
+        router.push('/auth');
     }
 
     return ( 
         <>
            <Grid sx={{position:'fixed'}}  >
               <Grid className='comp' sx={{minWidth:'207px', minHeight: '40vw', overflowY:'scroll' , overflowX: 'hidden',}}>
-                <Link legacyBehavior href={'/dashboard'}>
+                <Link legacyBehavior href='/dashboard'>
                     <Box sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,":hover":{backgroundColor:'#e8e8e8'}}}>
                         <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                             <HomeIcon/>
@@ -36,17 +37,17 @@ const SideBar = () => {
                     </Box>
                 </Link>
 
-                <Link legacyBehavior href={'/page'}>
-                    <Box sx={{backgroundColor:'#fff', borderRadius:'18px',pt:1.5,pb:1.5,mb:1,":hover":{backgroundColor:'#e8e8e8'}}}>
+                {/* <Link legacyBehavior  > */}
+                    <Box onClick={()=>router.push(`/anshyy`)} sx={{backgroundColor:'#fff', borderRadius:'18px',pt:1.5,pb:1.5,mb:1,":hover":{backgroundColor:'#e8e8e8'}}}>
                         <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                             <WebIcon/>
                             <h4 style={{marginTop:'auto',marginLeft:'6px'}}>View Page</h4>
                         </Box>
                     </Box>
-                </Link>
+                {/* </Link> */}
                 <h6 style={{marginLeft:'5px'}} >PUBLISH</h6>
 
-                <Link legacyBehavior href={'#'}>
+                <Link legacyBehavior href=''>
                     <Box sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,mt:1,":hover":{backgroundColor:'#e8e8e8'}}}>
                         <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                             <AutoAwesomeIcon/>
@@ -55,7 +56,7 @@ const SideBar = () => {
                     </Box>
                 </Link>
 
-                <Link legacyBehavior href={'#'}>
+                <Link legacyBehavior href=''>
                     <Box sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,":hover":{backgroundColor:'#e8e8e8'}}}>
                         <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                             <SearchIcon/>
@@ -64,7 +65,7 @@ const SideBar = () => {
                     </Box>
                 </Link>
 
-                <Link legacyBehavior href={'#'}>
+                <Link legacyBehavior href=''>
                     <Box sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,mb:1,":hover":{backgroundColor:'#e8e8e8'}}}>
                         <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                             <MailOutlineIcon/>
@@ -74,7 +75,7 @@ const SideBar = () => {
                 </Link>
                 
                 <h6 style={{marginLeft:'5px'}}>MY SUPPORT</h6>
-                <Link legacyBehavior href={'#'}>
+                <Link legacyBehavior href=''>
                     <Box sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,mb:1,mt:1,":hover":{backgroundColor:'#e8e8e8'}}}>
                         <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                             <GroupIcon/>
@@ -84,7 +85,7 @@ const SideBar = () => {
                 </Link>
 
                 <h6 style={{marginLeft:'5px'}}>SETTINGS</h6>
-                <Link legacyBehavior href={'#'}>
+                <Link legacyBehavior href=''>
                     <Box sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,mt:1,":hover":{backgroundColor:'#e8e8e8'}}}>
                         <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                             <BoltIcon/>
@@ -92,7 +93,7 @@ const SideBar = () => {
                         </Box>
                     </Box>
                 </Link>
-                <Link legacyBehavior href={'#'}>
+                <Link legacyBehavior href=''>
                     <Box sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,":hover":{backgroundColor:'#e8e8e8'}}}>
                         <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                             <CurrencyExchangeIcon/>
@@ -100,7 +101,7 @@ const SideBar = () => {
                         </Box>
                     </Box>
                 </Link>
-                <Link legacyBehavior href={'/manage'}>
+                <Link legacyBehavior href='/manage'>
                     <Box sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,":hover":{backgroundColor:'#e8e8e8'}}}>
                         <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                             <SettingsIcon/>
@@ -108,7 +109,7 @@ const SideBar = () => {
                         </Box>
                     </Box>
                 </Link>
-                <Link legacyBehavior href={'/about'}>
+                <Link legacyBehavior href='/about'>
                     <Box sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,":hover":{backgroundColor:'#e8e8e8'}}}>
                         <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                             <InfoIcon/>
@@ -116,14 +117,14 @@ const SideBar = () => {
                         </Box>
                     </Box>
                 </Link>
-                <Link onClick={handleClick} legacyBehavior href={'#'}> 
+                <a onClick={handleClick}> 
                     <Box  sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,":hover":{backgroundColor:'#e8e8e8'}}}>
                         <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                             <LogoutIcon/>
                             <h4 style={{marginTop:'auto',marginLeft:'6px'}}>Logout</h4>
                         </Box>
                     </Box>
-                </Link>   
+                </a>   
               </Grid>
               
             </Grid>

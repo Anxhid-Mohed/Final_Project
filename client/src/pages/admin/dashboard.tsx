@@ -1,4 +1,4 @@
-import Requests from "@/components/admin/Requests/Requests";
+
 import SideBar from "@/components/admin/SideBar/SideBar";
 import { Container, Grid } from "@mui/material";
 
@@ -11,7 +11,7 @@ const Dashboard = () => {
                 </Grid>
                 <Grid xs={12} sm={12} md={9.5} sx={{lineBreak:'anywhere'}}>
                     <h3>hellooo</h3>
-                    <Requests/>
+                   
                 </Grid>
             </Grid>
         </Container>

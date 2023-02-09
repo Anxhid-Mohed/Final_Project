@@ -21,17 +21,6 @@ const MenuProps = {
   },
 };
 
-const style = {
-    position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width:{xs:355,sm:400,md:400},
-    bgcolor: 'background.paper',
-    border: '0',
-    boxShadow: 24,
-    p: 4,
-};
 
 const names = [
     'Programmer',
