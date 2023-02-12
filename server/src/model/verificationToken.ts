@@ -3,7 +3,7 @@ import  { Schema,Date, model } from "mongoose";
 const verificationTokenSchema:Schema = new Schema({
     userId:{
         type:Schema.Types.ObjectId,
-        ref:'user',
+        ref:'users',
         required:true,
         unique:true,
     },

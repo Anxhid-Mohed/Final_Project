@@ -16,6 +16,8 @@ export const getServerSideProps = async (context:any) => {
     try {
         const username = context.params.username
         const response = await userPages(username)
+        console.log(response);
+        
         return {
             props :{datas:response.data}
         }
@@ -26,6 +28,8 @@ export const getServerSideProps = async (context:any) => {
 
 const userPage = (datas:any) => {
 
+    console.log(datas);
+    
     const coverImage:any = useRef()
     const [coverImg, setCoverImg] = React.useState<File[]>([]);
 
@@ -61,13 +65,15 @@ const userPage = (datas:any) => {
     }, [coverImg])
     
 
-    const btnStyle = {fontSize: "1.4em" }
-    const style = { color:'#303030', fontSize: "1.8em" }
+    const btnStyle = {fontSize:"1.4em" }
+    const style = { color:'#303030', fontSize: "1.5rem" }
+    console.log(datas?.datas.profile);
+    
     return (
         <>
            <Container  maxWidth={false}  sx={{ maxWidth: '1000px'}}>
             <Grid xs={12} boxShadow={.5} sx={{
-                backgroundImage:`url(${datas ? datas.datas.coverImage :''})`,
+                backgroundImage:`url(${datas.datas.coverImage ? datas.datas.coverImage :''})`,
                 backgroundRepeat: 'no-repeat',
                 backgroundSize:'cover',
                 height: { xs:'90px' , sm:'150px' , md:'200px'},
@@ -76,11 +82,11 @@ const userPage = (datas:any) => {
                 textAlign: 'end',
             }}>     
                 
-            <IconButton 
+            <Button 
              onClick = {()=>coverImage.current.click()}
-             sx={{marginLeft:'auto'}}>
+             sx={{marginLeft:'auto',backgroundColor:'rgb(205 205 205 / 47%)',mt:1,mr:2,color:'#a9aaab'}}>
                 <AiOutlineCloudUpload style={btnStyle}/>
-            </IconButton>
+            </Button>
             <input 
                 type="file"
                 name="profile"
@@ -88,7 +94,6 @@ const userPage = (datas:any) => {
                 onChange={(e:any)=>setCoverImg(e.target.files)}
                 hidden
             />
-                {/* //Cover-image */}
             </Grid>
             
             <Grid xs={12} sx={{display:'flex' , lineBreak:'anywhere' , minHeight:'10px'}}>
@@ -96,7 +101,7 @@ const userPage = (datas:any) => {
                     pl: 1,
                     marginTop:'-20px'
                 }}>
-                    <img src={datas ? datas.datas.profile :'https://t4.ftcdn.net/jpg/01/16/67/99/360_F_116679941_wPDZXXs58H5SKL15YDeC2xoRaenOjGvV.jpg'} alt="" style={{  width:'35%' ,borderRadius:'50%'}} />
+                    <img src={datas.datas.profile ? datas.datas.profile :'https://t4.ftcdn.net/jpg/01/16/67/99/360_F_116679941_wPDZXXs58H5SKL15YDeC2xoRaenOjGvV.jpg'} alt="" style={{  width:'35%' ,borderRadius:'50%'}} />
                     <Box sx={{marginTop:'5px' , display:{ xs:'block' , md:'none'}}}>
                         <Typography sx={{ fontWeight:'600' , fontSize:{ xs:'18px' , md:'24px'} }} >{datas?.datas.name}</Typography>
                         <Typography sx={{ fontSize:{ xs:'10px' , md:'17px'} }}><a href="">http://localhost:3000/pagevxvxcvxv</a></Typography>
@@ -151,7 +156,7 @@ const userPage = (datas:any) => {
                     <About data={datas?.datas}/>
                 </Grid>
                 <Grid xs={12} sm={12} md={6} m={1} sx={{ width:{ xs:'100%' , sm:'100%' , md:'50%' } }} >
-                    <AddPosts data={datas?.datas}/>
+                    <AddPosts data={datas?.datas.profile}/>
                 </Grid>
             </Grid>
 

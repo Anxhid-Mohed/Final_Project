@@ -1,7 +1,7 @@
 import { Request,Response } from 'express';
 import {genSalt,hash,compare} from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import adminModel from '../model/AdminSchema';
+import adminModel from '../model/adminSchema';
 import userModel from '../model/userSchema';
 import requestsModel from '../model/requestSchema';
 

@@ -22,3 +22,22 @@ export const uploadCoverImage = async (img:string,token:string) =>{
         console.log(error);
     }
 }
+
+export const uploadPost = async (formData:any,token:string) =>{
+    try {
+        const {data} = await userApi.post('/upload-post',formData,{headers:{'accesstoken':token}})
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+export const getUserFeeds = async (token:string) => {
+    try {
+        const {data} = await userApi.get('/posts',{headers:{'accesstoken':token}})
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+}

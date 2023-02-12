@@ -38,7 +38,7 @@ const SideBar = ({userData}:any) => {
                 </Link>
 
                 {/* <Link legacyBehavior  > */}
-                    <Box onClick={()=>router.push(`/anshyy`)} sx={{backgroundColor:'#fff', borderRadius:'18px',pt:1.5,pb:1.5,mb:1,":hover":{backgroundColor:'#e8e8e8'}}}>
+                    <Box onClick={()=>router.push(`/${userData}`)} sx={{backgroundColor:'#fff', borderRadius:'18px',pt:1.5,pb:1.5,mb:1,":hover":{backgroundColor:'#e8e8e8'}}}>
                         <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                             <WebIcon/>
                             <h4 style={{marginTop:'auto',marginLeft:'6px'}}>View Page</h4>

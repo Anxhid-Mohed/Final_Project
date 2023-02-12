@@ -1,5 +1,5 @@
 import express ,{Router} from 'express'
-import {userSignup,verifyAuth,userSignin,accountVerification,getDetails,createrRequest, profileManagement, userPage, uploadCoverImage} from '../../controller/userController'
+import {userSignup,verifyAuth,userSignin,accountVerification,getDetails,createrRequest, profileManagement, userPage, uploadCoverImage, accountDisable, accountEnable, accountDelete, uploadPosts, getUsersFeeds} from '../../controller/userController'
 import { verifyToken } from '../..//middleware/verifyToken'
 const router : Router = express.Router()
 
@@ -15,6 +15,11 @@ router.post('/request',verifyToken,createrRequest)
 router.patch('/manage',profileManagement)
 router.get('/page',userPage)
 router.patch('/upload-cover',verifyToken,uploadCoverImage)
+router.patch('/disable',verifyToken,accountDisable)
+router.patch('/enable',verifyToken,accountEnable)
+router.post('/terminate',verifyToken,accountDelete)
 
+router.post('/upload-post',verifyToken,uploadPosts)
+router.get('/posts',verifyToken,getUsersFeeds)
 export default router
 

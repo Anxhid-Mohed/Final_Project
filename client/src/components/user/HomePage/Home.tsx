@@ -70,6 +70,7 @@ const HomePage = () => {
     const [opens, setOpens] = useState(false);
     const [category, setCategory] = useState('');
     const { user } = useSelector((state:any)=>state.userInfo)
+    
     const dispatch = useDispatch();
 
     const handleOpen = () => setOpens(true);
@@ -102,7 +103,6 @@ const HomePage = () => {
     },[])
 
     const handleSubmit = async () => {
-        console.log(category);
         let token = localStorage.getItem('userToken') as string;
         const response = await createrRequest(category,token);
         if(response.status == true){

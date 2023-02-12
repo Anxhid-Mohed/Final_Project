@@ -7,6 +7,8 @@ import LockPersonOutlinedIcon from '@mui/icons-material/LockPersonOutlined';
 import GppMaybeOutlinedIcon from '@mui/icons-material/GppMaybeOutlined';
 import LogoutIcon from '@mui/icons-material/Logout';
 import Swal from 'sweetalert2';
+import Link from 'next/link';
+import Router from 'next/router';
 
 const AdminSideBar = () => {
 
@@ -22,11 +24,7 @@ const AdminSideBar = () => {
           }).then((result) => {
             if (result.isConfirmed) {
                 localStorage.removeItem('adminToken');
-                Swal.fire(
-                    'Deleted!',
-                    'Your file has been deleted.',
-                    'success'
-                )
+                Router.push('/admin')
             }
           })
     }
@@ -35,24 +33,30 @@ const AdminSideBar = () => {
         <>
            <Grid sx={{position:'fixed'}}>
               <Grid className='comp'  sx={{minWidth:'206px', minHeight: '40vw', overflowY:'scroll' , overflowX: 'hidden',}}>
-                <Box sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,":hover":{backgroundColor:'#e8e8e8'}}}>
-                    <Box sx={{ml:2,display:'flex',color:'#333232'}}>
-                        <HomeIcon/>
-                        <h4 style={{marginTop:'auto',marginLeft:'6px'}}>Dashboard</h4>
-                    </Box>  
-                </Box>
-                <Box mt={1} sx={{backgroundColor:'#fff', borderRadius:'18px',pt:1.5,pb:1.5,":hover":{backgroundColor:'#e8e8e8'}}}>
-                    <Box sx={{ml:2,display:'flex',color:'#333232'}}>
-                        <PeopleAltTwoToneIcon/>
-                        <h4 style={{marginTop:'auto',marginLeft:'6px'}}>Users</h4>
+                <Link legacyBehavior href='/admin/dashboard'>
+                    <Box sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,":hover":{backgroundColor:'#e8e8e8'}}}>
+                        <Box sx={{ml:2,display:'flex',color:'#333232'}}>
+                            <HomeIcon/>
+                            <h4 style={{marginTop:'auto',marginLeft:'6px'}}>Dashboard</h4>
+                        </Box>  
                     </Box>
-                </Box>
+                </Link>
+                <Link legacyBehavior href='/admin/users'>
+                    <Box mt={1} sx={{backgroundColor:'#fff', borderRadius:'18px',pt:1.5,pb:1.5,":hover":{backgroundColor:'#e8e8e8'}}}>
+                        <Box sx={{ml:2,display:'flex',color:'#333232'}}>
+                            <PeopleAltTwoToneIcon/>
+                            <h4 style={{marginTop:'auto',marginLeft:'6px'}}>Users</h4>
+                        </Box>
+                    </Box>
+                </Link>
+                <Link legacyBehavior href='/admin/requests'>
                 <Box mt={1} sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,":hover":{backgroundColor:'#e8e8e8'}}}>
                     <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                         <LockPersonOutlinedIcon/>
                         <h4 style={{marginTop:'auto',marginLeft:'6px'}}>Requests</h4>
                     </Box>
                 </Box>
+                </Link>
                 <Box mt={1} sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,":hover":{backgroundColor:'#e8e8e8'}}}>
                     <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                         <GppMaybeOutlinedIcon/>
