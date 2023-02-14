@@ -16,7 +16,7 @@ const postSchema:Schema = new Schema({
     },
 
     like:[{
-        like:{
+        userId:{
             type:Schema.Types.ObjectId,
             ref:'users',
         }

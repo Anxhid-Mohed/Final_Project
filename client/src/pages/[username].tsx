@@ -8,6 +8,7 @@ import About from "@/components/user/PageComponents/About";
 import AddPosts from "@/components/user/PageComponents/AddPost";
 import { storage } from "@/firebase/config";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import Post from "@/components/user/PostPage/Post";
 
 
 
@@ -32,6 +33,8 @@ const userPage = (datas:any) => {
     
     const coverImage:any = useRef()
     const [coverImg, setCoverImg] = React.useState<File[]>([]);
+    const [about, setAbout] = React.useState(true);
+    const [post, setPost] = React.useState(false)
 
     useEffect(() => {
         
@@ -146,19 +149,28 @@ const userPage = (datas:any) => {
                     my={3}
                     ml={3}
                     >
-                    <Typography><a>About</a></Typography>
-                    <Typography><a>Posts</a></Typography>
+                    <Typography onClick={()=>{
+                        setPost(false)
+                        setAbout(true);
+                    }}><a>About</a></Typography>
+
+                    <Typography onClick={()=>{
+                        setAbout(false);
+                        setPost(true)
+                    }}><a>Posts</a></Typography>
                 </Stack>
             </Grid>
 
-            <Grid mt={3} sx={{display:{md:'flex',sm:'flex'}}}>
+            {about &&<Grid mt={3} sx={{display:{md:'flex',sm:'flex'}}}>
                 <Grid xs={12} sm={12} md={6} m={1} sx={{ width:{ xs:'100%' , sm:'100%' , md:'50%' } }} >
                     <About data={datas?.datas}/>
                 </Grid>
                 <Grid xs={12} sm={12} md={6} m={1} sx={{ width:{ xs:'100%' , sm:'100%' , md:'50%' } }} >
                     <AddPosts data={datas?.datas.profile}/>
                 </Grid>
-            </Grid>
+            </Grid>}
+
+            {post && <Post/>}
 
             
         </Container>

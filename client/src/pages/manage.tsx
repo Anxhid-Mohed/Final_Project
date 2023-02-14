@@ -5,9 +5,11 @@ import Navbar from "@/components/user/NavBar/NavBar";
 import { Box, Button, Container, Fade, FormControl, Grid, IconButton, InputLabel, MenuItem, Modal, Select, SelectChangeEvent, TextField, Typography } from "@mui/material";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { storage } from "@/firebase/config";
+import { useDispatch, useSelector } from 'react-redux';
 import { userProfileUpdate } from "@/Apis/userApi/userManagement";
 import { tokenVerification } from "@/Apis/userApi/userAuthRequest";
 import router from "next/router";
+import { userDetails } from "@/redux/userSlice";
 
 
 const ITEM_HEIGHT = 38;
@@ -34,10 +36,12 @@ const names = [
 
 const ManageAccount = () => {
 
+    const { user } = useSelector((state:any)=>state.userInfo)
+    const dispatch = useDispatch();
     const ProfileImg:any = useRef()
     const [profile, setProfile] = React.useState<File[]>([]);
     const [category, setCategory] = React.useState('');
-    const [user , setUser] =    React.useState('')
+    const [users , setUsers] = React.useState('')
 
     const handleChange = (event: SelectChangeEvent) => {
         setCategory(event.target.value as string);
@@ -54,8 +58,9 @@ const ManageAccount = () => {
                     if(response.status == false || response.isBanned === true){
                         router.push('/auth')
                     }else if (response.isAuthenticated && response.isBanned === false){
-                        setUser(response.userId)
-                        router.push('/manage') 
+                        dispatch(userDetails(response))
+                        setUsers(response.userId)
+                        
                     }else{
                         router.push('/auth')
                     }
@@ -94,11 +99,11 @@ const ManageAccount = () => {
                 userId:user
             };
             const response = await userProfileUpdate(obj)
-            console.log('response kitty');  
         })
         console.log(profile[0].name)
     }
-
+    console.log(user?.username);
+    
     const styles = { fontSize: "1.8em",color:'#ababab'}
     return (  
         <>
@@ -106,7 +111,7 @@ const ManageAccount = () => {
             <Container>
                 <Grid item container sx={{display:'flex',mt:11}}>
                     <Grid item md={2.5} sx={{display: { xs: 'none', sm: 'none', md: 'block'} }}>
-                        <SideBar/>
+                        <SideBar userData={user?.username}/>
                     </Grid>
                     <Grid item xs={12} sm={12} md={9.5} sx={{lineBreak:'auto'}}>
                         <Container maxWidth='lg' >

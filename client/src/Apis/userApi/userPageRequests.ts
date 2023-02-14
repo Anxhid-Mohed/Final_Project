@@ -41,3 +41,66 @@ export const getUserFeeds = async (token:string) => {
         console.log(error);
     }
 }
+
+export const removePost = async (id:string) => {
+    try {
+        const {data} = await userApi.delete(`/delete-post?id=${id}`)
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const editPost = async (id:string,changes:string) => {
+    try {
+        const {data} = await userApi.patch('/edit-post',{'id':id,'changes':changes})
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const likePost = async (id:string,token:string) => {
+    try {
+        const {data} = await userApi.patch('/like-post',{'postId':id},{headers:{'accesstoken':token}})
+        return data;
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const commentPost = async (comment:string,id:string,token:string) => {
+    try {
+        const {data} = await userApi.post('/comment-post',{'comment':comment,'postId':id},{headers:{'accesstoken':token}})
+        return data ;
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const getPostComments = async (postId:string) => {
+    try {
+        const {data} = await userApi.get(`/comments?id=${postId}`)
+        return data;
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const commentsLikes = async (postId:string,commentId:string,token:string) => {
+    try {
+        const {data} = await userApi.patch('/comments-likes',{'postId':postId,'commentId':commentId},{headers: {'accesstoken':token}});
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const deleteComments = async (commentId:string) => {
+    try {
+        const {data} = await userApi.delete(`/delete-comments?commentId=${commentId}`);
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+}

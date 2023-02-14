@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { styled } from '@mui/material/styles';
-import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import { Avatar, Box, Button, Container, Grid, Modal, Stack, TextField, Typography } from '@mui/material';
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
@@ -11,14 +9,29 @@ import FeedCard from '@/components/user/Feeds/FeedCard';
 import { FcAddImage, FcVideoCall, FcRules } from 'react-icons/fc';
 import { MdCloudUpload } from 'react-icons/md';
 import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { getUserFeeds, uploadPost } from '@/Apis/userApi/userPageRequests';
 import { storage } from '@/firebase/config';
 import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 
-const setErrMsg = (msg: string) =>{
+export const setErrMsg = (msg: string) =>{
   toast.error(msg, {
       position: "top-right",
       autoClose: 2500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+  });
+  return;
+}
+
+export const setSuccessMsg = (msg: string) => {
+  toast.success(msg, {
+      position: "top-right",
+      autoClose: 2000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -139,7 +152,10 @@ export default function RecipeReviewCard() {
   }
 
   const styles = { fontSize: "1.5em" }
-  
+  let obj = {
+    state:upload,
+    setState:setUpload
+  }
   return (
     <Container maxWidth="sm">
       <Grid xs={12} md={12}>
@@ -197,21 +213,21 @@ export default function RecipeReviewCard() {
                   </Typography>
                       <Box>
                           <Box  
-                              onClick={() =>postImg.current.click()}
-                              sx={{
-                                height:'220px',
-                                backgroundColor:'rgb(205 205 205 / 47%)',
-                                border:'2px dashed #ababab',
-                                borderRadius:'12px',
-                                textAlign:'center',
-                              }}> <MdCloudUpload style={{fontSize:'3rem',color:'#ababab',marginTop:'77px'}}/>
-                              <input 
-                                type="file"
-                                name="post"
-                                ref={postImg}
-                                onChange={(e:any)=>setPost(e.target.files)}
-                                hidden
-                              />
+                            onClick={() =>postImg.current.click()}
+                            sx={{
+                              height:'220px',
+                              backgroundColor:'rgb(205 205 205 / 47%)',
+                              border:'2px dashed #ababab',
+                              borderRadius:'12px',
+                              textAlign:'center',
+                            }}> <MdCloudUpload style={{fontSize:'3rem',color:'#ababab',marginTop:'77px'}}/>
+                            <input 
+                              type="file"
+                              name="post"
+                              ref={postImg}
+                              onChange={(e:any)=>setPost(e.target.files)}
+                              hidden
+                            />
                           </Box>
                           <Box mt={1}>
                             <TextField
@@ -259,7 +275,8 @@ export default function RecipeReviewCard() {
         {
           feeds.map((feed:any)=>{
             return(
-              <FeedCard key={feed._id} data={feed}/>
+              <FeedCard key={feed._id} data={feed} setUpload={setUpload} upload={upload}/>
+              // upload={upload} setUpload={setUpload}
             )
           })
         }

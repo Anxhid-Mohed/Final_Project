@@ -42,7 +42,7 @@ const About = () => {
                     
                     if(response.status == false || response.isBanned === true){
                         router.push('/auth')
-                    }else if (response.isAuthenticated){
+                    }else if (response.isAuthenticated  && response.isBanned === false){
                         dispatch(userDetails(response))
                         console.log(response);
                         

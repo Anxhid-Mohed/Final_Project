@@ -6,7 +6,7 @@ import userModel from '../model/userSchema'
 import verificationModel from '../model/verificationToken';
 import postsModel from '../model/postsSchema';
 import requestModel from '../model/requestSchema';
-
+import commentsModel from '../model/commentsSchema';
 
 //---> Authentication-validation <---//
 export const verifyAuth = async(req:Request,res:Response) => {
@@ -318,6 +318,144 @@ export const getUsersFeeds = async (req:Request, res:Response) => {
             res.status(200).json({status:true,data:feeds,message:'success'})
         }else{
             res.json({status:false,message:'Oops! Something went wrong'})
+        }
+    } catch (error) {
+        res.status(500).json({status:false,message:'Internal Server'})
+    }
+}
+
+export const removePost = async (req:Request , res:Response) => {
+    try {
+        const postId = req.query.id
+        console.log(postId);
+        if(postId){
+            await postsModel.findByIdAndRemove({_id:postId})
+            res.status(200).json({status:true,message:'post deleted successfully'})
+        }else{
+            res.json({status:false,message:'deletion failed! Something went wrong'})
+        }
+    } catch (error) {
+        res.status(500).json({status:false,message:'Internal Server'})
+    }
+}
+
+export const editPost = async (req:Request, res:Response) =>{
+    try {
+        const {id,changes} = req.body
+        if(id && changes){
+            await postsModel.findByIdAndUpdate({_id:id},{caption:changes})
+            res.status(200).json({status:true,message:'Edit post successfull'})
+        }else{
+            res.json({status:false,message:'Oops! Something went wrong'})
+        }
+    } catch (error) {
+        res.status(500).json({status:false,message:'Internal Server'})
+    }
+}
+
+export const likePost = async (req:Request, res:Response) => {
+    try {
+        const postId = req.body.postId
+        const userId = req.userId
+        console.log(userId);
+        const post = await postsModel.findById(postId)
+        let likeObj = {
+            userId: userId,
+        }
+        let likeExist = post?.like.some((data:{userId:string}) => data.userId == userId)
+        if(!likeExist){
+            const post = await postsModel.findOne({_id:postId})
+            post?.like.push(likeObj)
+            post?.save().then((response)=> {
+                res.status(200).json({status:true,action:'liked',message:'like added successfully'})
+            })
+        }else{
+            const existLike = await postsModel.findOne({_id:postId},{'like.userId':userId})
+            existLike?.like.splice(0,1);
+            await existLike?.save().then((response)=>{
+                res.status(200).json({status:true,action:'unliked',message:'unliked successfully'})
+            })
+        }
+        
+    } catch (error) {
+        res.status(500).json({status:false,message:'Internal Server'})
+    }
+}
+
+export const getPostComments = async (req:Request, res: Response) => {
+    try {
+        const postId = req.query.id
+        if(postId){
+            const comments = await commentsModel.find({postId}).populate('userId')
+            res.status(200).json({status:true,data:comments, message:'success'})
+        }else{
+            res.json({status:false,message:'failed to find comments'})
+        }
+    } catch (error) {
+        res.status(500).json({status:false,message:'Internal Server'})
+    }
+}
+
+export const commentPost = async (req:Request, res:Response) => {
+    try {
+        const postId = req.body.postId
+        const userId = req.userId
+        const comment = req.body.comment
+        if(postId && userId && comment){
+            const doc = new commentsModel({
+                userId: userId,
+                postId: postId,
+                comment: comment
+            })
+            await doc.save()
+            res.status(200).json({status:true,message:'comment added'})
+        }else{
+            res.json({status:false,message:'something went wrong'})
+        }
+    } catch (error) {
+        res.status(500).json({status:false,message:'Internal Server'})
+    }
+}
+
+export const commentsLikes = async (req:Request, res:Response) => {
+    try {
+        const userId = req.userId;
+        const commentId = req.body.commentId;
+        const comment = await commentsModel.findById(commentId)
+        let likeObj = {
+            userId: userId,
+        }
+        let likeExist = comment?.likes.some((data:{userId:string}) => data.userId == userId)
+        console.log(likeExist);
+        
+        if(!likeExist){
+            const comment = await commentsModel.findOne({_id:commentId})
+            console.log(comment);
+            comment?.likes.push(likeObj)
+            comment?.save().then((response)=> {
+                res.status(200).json({status:true,action:'liked',message:'like added successfully'})
+            })
+        }else{
+            const existLike = await commentsModel.findOne({_id:commentId},{'likes.userId':userId})
+            existLike?.likes.splice(0,1);
+            await existLike?.save().then((response)=>{
+                res.status(200).json({status:true,action:'unliked',message:'unliked successfully'})
+            })
+        }
+    } catch (error) {
+        res.status(500).json({status:false,message:'Internal Server'})
+    }
+}
+
+
+export const deleteComments = async (req:Request, res:Response) => {
+    try {
+        const commentId = req.query.commentId;
+        if(commentId){
+            await commentsModel.findByIdAndRemove({_id:commentId})
+            res.status(200).json({status:true,message:'comment deleted successfully'})
+        }else{
+            res.json({status:false,message:'comment not found'})
         }
     } catch (error) {
         res.status(500).json({status:false,message:'Internal Server'})
