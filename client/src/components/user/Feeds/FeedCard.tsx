@@ -42,7 +42,6 @@ const commentModalStyle = {
 const FeedCard = ({data,setUpload,upload}:any) => {
 
     const {user} = useSelector((state:any)=>state.userInfo)
-
     const [editOpen, setEditOpen] = React.useState(false)
     const [ comment, setComment] = React.useState('')
     const [commentsData, setCommentsData] = React.useState([])
@@ -52,8 +51,6 @@ const FeedCard = ({data,setUpload,upload}:any) => {
     const [ update , setUpdate] = React.useState(false)
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
-
-    console.log('commentdata', commentsData);
     
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -195,8 +192,12 @@ const FeedCard = ({data,setUpload,upload}:any) => {
                             'aria-labelledby': 'basic-button',
                             }}
                         >
-                            <MenuItem onClick={()=>{setEditOpen(true); setAnchorEl(null);}}><AiOutlineEdit style={styles}/>Edit</MenuItem>
-                            <MenuItem onClick={handleDelete}><MdDeleteOutline style={styles}/>Delete</MenuItem>
+                            { data?.userId._id === user?.userId &&
+                                <>
+                                    <MenuItem onClick={() => { setEditOpen(true); setAnchorEl(null); } }><AiOutlineEdit style={styles} />Edit</MenuItem>
+                                    <MenuItem onClick={handleDelete}><MdDeleteOutline style={styles} />Delete</MenuItem>
+                                </>
+                            }
                             <MenuItem onClick={handleClose}><AiOutlineInfoCircle style={styles}/>Report</MenuItem>
                         </Menu>
                     </>
@@ -370,18 +371,17 @@ const FeedCard = ({data,setUpload,upload}:any) => {
                                                     </ListItemAvatar>
                                                     <ListItemText sx={{lineBreak:'auto'}} primary={comments?.userId.username} secondary={comments?.comment} />
                                                     <IconButton
-                                                    onClick={()=>handleCommentsLike(comments._id)}
+                                                         onClick={()=>handleCommentsLike(comments._id)}
                                                     >
-                                                     {comments.likes.some((el:any)=>el.userId === user.userId ) ? <FavoriteIcon style={{color:'#f73f31',fontSize:'17px',}}/>:<FavoriteBorderRoundedIcon style={{color:'gray',fontSize:'17px',}}/> }   
+                                                    { comments.likes.some((el:any)=>el.userId === user.userId ) ? <FavoriteIcon style={{color:'#f73f31',fontSize:'17px',}}/>:<FavoriteBorderRoundedIcon style={{color:'gray',fontSize:'17px',}}/> }   
                                                     </IconButton>
                                                     <span style={{color:'gray',fontSize:'15px',marginRight:'10px'}}>{comments ? comments.likes.length:''}</span>
 
-                                                    <IconButton
-                                                    onClick={()=>handleDeleteComment(comments._id)}
+                                                   <IconButton
+                                                         onClick={()=>handleDeleteComment(comments._id)}
                                                     >
                                                         <ClearRoundedIcon style={{color:'gray',fontSize:'18px'}}/>
                                                     </IconButton>
-                                                    
                                                 </ListItem>
                                             </List>
                                         )

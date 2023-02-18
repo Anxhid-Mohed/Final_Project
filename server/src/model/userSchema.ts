@@ -35,6 +35,21 @@ const userSchema = new Schema({
         type:String,
         default:null
     },
+
+    followers:[
+        {
+            type:Schema.Types.ObjectId,
+            ref:'users'
+        }
+    ],
+
+    followings:[{
+        userId:{
+            type:Schema.Types.ObjectId,
+            ref:'users'
+        }
+    }],
+
     isVerified:{
         type:Boolean,
         default:false,

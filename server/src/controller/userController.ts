@@ -7,6 +7,7 @@ import verificationModel from '../model/verificationToken';
 import postsModel from '../model/postsSchema';
 import requestModel from '../model/requestSchema';
 import commentsModel from '../model/commentsSchema';
+import { Console } from 'console';
 
 //---> Authentication-validation <---//
 export const verifyAuth = async(req:Request,res:Response) => {
@@ -289,6 +290,47 @@ export const accountDelete = async (req:Request, res:Response) => {
     }
 }
 
+export const userFollowAndUnFollow = async (req:Request, res:Response) => {
+    try {
+        const userId = Object(req.userId);
+        const createrId = req.body.createrId;
+        const user = await userModel.findById(userId);
+        const exists = user?.followings.some((el:any) => el.userId == createrId);
+        if(createrId && userId){
+            if(!exists){
+                //Add to users followings list
+                const user = await userModel.findById(userId);
+                user?.followings.push(createrId);
+                user?.save();
+                //Add to creater followers list
+                const creater = await userModel.findById(createrId);
+                creater?.followers.push(userId);
+                creater?.save();
+                console.log('followed');
+                res.status(200).json({status: 'success',action:'followed',message:'followed successfully'});
+            }else{
+                //remove from user following list
+                const user = await userModel.findOne({_id:userId});
+                const followingIndex  = user?.followings.findIndex((element:any)=>element == createrId) as number;
+                user?.followings.splice(followingIndex,1);
+                await user?.save();
+                //remove from creater followers list
+                const creater = await userModel.findOne({_id:createrId});
+                const followersIndex  = creater?.followers.findIndex((element:any)=>element == userId) as number;
+                creater?.followers.splice(followersIndex,1);
+                await creater?.save();
+                console.log('unfollowed');
+                res.status(200).json({status: 'success',action:'UnFollowed',message:'UnFollowed successfully'});
+            }
+        }else{
+            res.json({status:false,message:'oops! Something went wrong'})
+        }
+
+    } catch (error) {
+        res.status(500).json({status:false,message:'internal server error'})
+    }
+}
+
 export const uploadPosts = async (req:Request , res:Response) => {
     try {
         const userId = req.userId;
@@ -310,11 +352,14 @@ export const uploadPosts = async (req:Request , res:Response) => {
 }
 
 //---> Get User Feeds <---//
-export const getUsersFeeds = async (req:Request, res:Response) => {
+export const getUserFeeds = async (req:Request, res:Response) => {
     try {
-        const userId = req.userId
-        if(userId){
-            const feeds = await postsModel.find({userId:userId}).sort({createdAt: -1}).populate('userId');
+        const username = req.query.username
+        if(username){
+            const user = await userModel.findOne({username})
+            const userId = user?._id
+            
+            const feeds = await postsModel.find({userId}).sort({createdAt: -1}).populate('userId');
             res.status(200).json({status:true,data:feeds,message:'success'})
         }else{
             res.json({status:false,message:'Oops! Something went wrong'})
@@ -357,7 +402,6 @@ export const likePost = async (req:Request, res:Response) => {
     try {
         const postId = req.body.postId
         const userId = req.userId
-        console.log(userId);
         const post = await postsModel.findById(postId)
         let likeObj = {
             userId: userId,
@@ -370,11 +414,12 @@ export const likePost = async (req:Request, res:Response) => {
                 res.status(200).json({status:true,action:'liked',message:'like added successfully'})
             })
         }else{
-            const existLike = await postsModel.findOne({_id:postId},{'like.userId':userId})
-            existLike?.like.splice(0,1);
-            await existLike?.save().then((response)=>{
-                res.status(200).json({status:true,action:'unliked',message:'unliked successfully'})
-            })
+            const existLike = await postsModel.findOne({_id:postId})
+            const index = existLike?.like.findIndex((element:any) => element.userId == userId)
+            console.log(index);
+            existLike?.like.splice(index,1);
+            await existLike?.save()
+            res.status(200).json({status:true,action:'unliked',message:'unliked successfully'})
         }
         
     } catch (error) {
@@ -425,20 +470,22 @@ export const commentsLikes = async (req:Request, res:Response) => {
         let likeObj = {
             userId: userId,
         }
-        let likeExist = comment?.likes.some((data:{userId:string}) => data.userId == userId)
+        let likeExist = comment?.likes.some((data:any) => data.userId == userId)
         console.log(likeExist);
         
         if(!likeExist){
             const comment = await commentsModel.findOne({_id:commentId})
-            console.log(comment);
             comment?.likes.push(likeObj)
             comment?.save().then((response)=> {
+                console.log(response,'kkkkkkkkkk');
                 res.status(200).json({status:true,action:'liked',message:'like added successfully'})
             })
         }else{
-            const existLike = await commentsModel.findOne({_id:commentId},{'likes.userId':userId})
-            existLike?.likes.splice(0,1);
+            const existLike = await commentsModel.findOne({_id:commentId})
+            const index = existLike?.likes.findIndex((element:any)=> element.userId == userId)
+            existLike?.likes.splice(index,1);
             await existLike?.save().then((response)=>{
+                console.log(response,'unlike')
                 res.status(200).json({status:true,action:'unliked',message:'unliked successfully'})
             })
         }
@@ -456,6 +503,34 @@ export const deleteComments = async (req:Request, res:Response) => {
             res.status(200).json({status:true,message:'comment deleted successfully'})
         }else{
             res.json({status:false,message:'comment not found'})
+        }
+    } catch (error) {
+        res.status(500).json({status:false,message:'Internal Server'})
+    }
+}
+
+export const getAllCreaters = async (req:Request, res:Response) => {
+    try {
+        const creaters = await userModel.find({creator:true})
+        if(creaters){
+            res.status(200).json({status:true,data:creaters,message:'success'})
+        }else{
+            res.json({status:false,message:'creaters not found'}) 
+        }
+    } catch (error) {
+        res.status(500).json({status:false,message:'Internal Server'})
+    }
+}
+
+export const searchCreaters = async (req:Request, res:Response) => {
+    try {
+        const search = req.query.explore
+        console.log(search);
+        const data = await userModel.find({username : {$regex: search }})
+        if(data){
+            res.status(200).json({status:true,data:data,message:'success'})
+        }else{
+            res.json({status:false,message:'creaters not found'}) 
         }
     } catch (error) {
         res.status(500).json({status:false,message:'Internal Server'})
@@ -481,6 +556,8 @@ export const getDetails = async (req:Request,res:Response) => {
                 'profile':userData.profile,
                 'coverImage':userData.coverImage,
                 'category':userData.category,
+                'followers':userData.followers,
+                'followings':userData.followings,
                 'isVerified':userData.isVerified,
                 'isBanned':userData.isBanned,
                 'creator':userData.creator,

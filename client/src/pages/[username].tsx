@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @next/next/no-img-element */
 import React,{ useEffect, useRef } from "react";
-import { uploadCoverImage, userPages } from '@/Apis/userApi/userPageRequests'
+import { uploadCoverImage, userFollow, userPages } from '@/Apis/userApi/userPageRequests'
 import { Container, Grid, Box, Typography, Button, Stack, Divider, IconButton } from '@mui/material';
 import { AiOutlineMessage ,AiOutlineCloudUpload} from 'react-icons/ai'
 import About from "@/components/user/PageComponents/About";
@@ -9,6 +9,10 @@ import AddPosts from "@/components/user/PageComponents/AddPost";
 import { storage } from "@/firebase/config";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import Post from "@/components/user/PostPage/Post";
+import { tokenVerification } from "@/Apis/userApi/userAuthRequest";
+import { useRouter } from "next/router";
+import { userDetails } from "@/redux/userSlice";
+import { useDispatch ,useSelector} from "react-redux";
 
 
 
@@ -29,13 +33,37 @@ export const getServerSideProps = async (context:any) => {
 
 const userPage = (datas:any) => {
 
-    console.log(datas);
+    console.log(datas,'---------------');
     
+    const {user} = useSelector((state:any)=>state.userInfo)
+    const dispatch = useDispatch()
+    const router = useRouter()
     const coverImage:any = useRef()
     const [coverImg, setCoverImg] = React.useState<File[]>([]);
     const [about, setAbout] = React.useState(true);
-    const [post, setPost] = React.useState(false)
+    const [post, setPost] = React.useState(false);
+    const [isFollowed, setIsFollowed] = React.useState(user?.followings.some((element:any)=>element.userId === datas?.datas._id))
 
+    useEffect(()=>{
+        let token = localStorage.getItem('userToken')
+        if(token){
+           (
+                async () => {
+
+                    const response = await tokenVerification(token);
+                    if(response.status == false || response.isBanned === true){
+                        router.push('/auth')
+                    }else if (response.isAuthenticated){
+                        console.log(response);
+                        dispatch(userDetails(response))
+                    }
+                }
+            )()
+        }else{
+          router.push('/auth')
+        }
+    },[])
+    
     useEffect(() => {
         
         if(coverImg.length>0){
@@ -66,11 +94,20 @@ const userPage = (datas:any) => {
             }
         }
     }, [coverImg])
+
+    const handleFollow = async (createrId:string) => {
+        let token = localStorage.getItem('userToken') as string
+        const response = await userFollow(createrId,token)
+        if(response.action === 'followed'){
+            setIsFollowed(true)
+        }else{
+            setIsFollowed(false)
+        }
+    }
     
 
     const btnStyle = {fontSize:"1.4em" }
     const style = { color:'#303030', fontSize: "1.5rem" }
-    console.log(datas?.datas.profile);
     
     return (
         <>
@@ -120,16 +157,36 @@ const userPage = (datas:any) => {
 
                 <Grid xs={5} md={4} sx={{ marginTop:'2%',display:'flex' , ml:'auto' }}>
 
-                    <Box m={0.3}>
-                        <Button  sx={{
-                            backgroundColor:'#eb1e44',
-                            "&:hover": { backgroundColor: "#eb1e44"},
-                            textTransform: 'none',
-                            borderRadius: 3,
-                            color:'white',
-                            width:{md:'8.2rem'},
-                        }}>Follow</Button>
-                    </Box>
+                    {user?.userId != datas?.datas._id && 
+                        <>
+                        {isFollowed ?
+                            <Box m={0.3}>
+                                <Button  
+                                onClick={()=>handleFollow(datas.datas._id)}
+                                sx={{
+                                    backgroundColor:'#f0eded',
+                                    "&:hover": { backgroundColor: "#f0eded"},
+                                    textTransform: 'none',
+                                    borderRadius: 3,
+                                    color:'white',
+                                    width:{md:'8.2rem'},
+                                }}>Unfollow</Button>
+                            </Box>:
+                            <Box m={0.3}>
+                                <Button  
+                                onClick={()=>handleFollow(datas.datas._id)}
+                                sx={{
+                                    backgroundColor:'#eb1e44',
+                                    "&:hover": { backgroundColor: "#eb1e44"},
+                                    textTransform: 'none',
+                                    borderRadius: 3,
+                                    color:'white',
+                                    width:{md:'8.2rem'},
+                                }}>Follow</Button>
+                            </Box>
+                        }
+                        </>
+                    }
                     
                     <Box m={0.3}>
                         <Button sx={{
@@ -165,12 +222,12 @@ const userPage = (datas:any) => {
                 <Grid xs={12} sm={12} md={6} m={1} sx={{ width:{ xs:'100%' , sm:'100%' , md:'50%' } }} >
                     <About data={datas?.datas}/>
                 </Grid>
-                <Grid xs={12} sm={12} md={6} m={1} sx={{ width:{ xs:'100%' , sm:'100%' , md:'50%' } }} >
+                {datas?.datas._id === user?.userId && <Grid xs={12} sm={12} md={6} m={1} sx={{ width:{ xs:'100%' , sm:'100%' , md:'50%' } }} >
                     <AddPosts data={datas?.datas.profile}/>
-                </Grid>
+                </Grid>}
             </Grid>}
 
-            {post && <Post/>}
+            {post && <Post username={datas?.datas.username} profile={datas?.datas.profile}/>}
 
             
         </Container>
@@ -181,11 +238,3 @@ const userPage = (datas:any) => {
  
 export default userPage;
 
-function resolve(result: string | ArrayBuffer | null): any {
-    throw new Error("Function not implemented.");
-}
-
-
-function reject(error: ProgressEvent<FileReader>): any {
-    throw new Error("Function not implemented.");
-}

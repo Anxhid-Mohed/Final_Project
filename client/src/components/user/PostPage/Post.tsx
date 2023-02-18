@@ -55,8 +55,8 @@ const style = {
 };
 
 
-export default function RecipeReviewCard() {
-
+export default function RecipeReviewCard({username,profile}:any) {
+ 
     const {user} = useSelector((state:any)=>state.userInfo)
     const dispatch = useDispatch()
     const router = useRouter();
@@ -67,8 +67,9 @@ export default function RecipeReviewCard() {
     const [upload , setUpload] = React.useState(false)
     const [feeds, setFeeds] = React.useState([])
     const handleOpen = () => setOpen(true);
+    
     const handleClose = () => setOpen(false);
-    console.log("stste",feeds);
+
     
     useEffect(()=>{
         let token = localStorage.getItem('userToken')
@@ -85,16 +86,17 @@ export default function RecipeReviewCard() {
             }
         )()
         }else{
-        router.push('/auth')
+            router.push('/auth')
         }
     },[])
 
     useEffect(()=>{
         let token = localStorage.getItem('userToken')
-        if(token){
+
+        if(username && token){
         (
             async () => {
-            const response = await getUserFeeds(token)
+            const response = await getUserFeeds(username,token)
             setFeeds(response?.data);
             }
         )()
@@ -157,15 +159,16 @@ export default function RecipeReviewCard() {
     return (
         <Container maxWidth="sm">
         <Grid mt={4} xs={12} md={12}>
+            {username === user?.username && 
             <Box boxShadow={2} sx={{
-            borderRadius:'20px',
-            py:'4px',
-            pr:'15px'
+                borderRadius:'20px',
+                py:'4px',
+                pr:'15px'
             }}
             >
                 <ToastContainer/>
                 <Box p={2} mb={2} sx={{color:'#333232',display:'flex'}}>
-                    <Avatar alt="DP" src={user? user?.profile:''} />
+                    <Avatar alt="DP" src={profile? profile:''} />
                     <Typography sx={{
                         backgroundColor:'#f7f7f7',
                         borderRadius:'20px',
@@ -269,7 +272,7 @@ export default function RecipeReviewCard() {
                             </Box>
                     </Box>
                 </Modal>
-            </Box>
+            </Box>}
             {
                 feeds.map((feed:any)=>{
                     return(

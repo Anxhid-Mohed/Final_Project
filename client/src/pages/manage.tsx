@@ -2,6 +2,8 @@
 import React,{ useEffect, useRef, useState } from "react";
 import SideBar from "@/components/user/SideBar/SideBar";
 import Navbar from "@/components/user/NavBar/NavBar";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { Box, Button, Container, Fade, FormControl, Grid, IconButton, InputLabel, MenuItem, Modal, Select, SelectChangeEvent, TextField, Typography } from "@mui/material";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { storage } from "@/firebase/config";
@@ -10,6 +12,8 @@ import { userProfileUpdate } from "@/Apis/userApi/userManagement";
 import { tokenVerification } from "@/Apis/userApi/userAuthRequest";
 import router from "next/router";
 import { userDetails } from "@/redux/userSlice";
+import { setSuccessMsg } from "./posts";
+import { setErrMsg } from "@/components/user/PostPage/Post";
 
 
 const ITEM_HEIGHT = 38;
@@ -37,6 +41,7 @@ const names = [
 const ManageAccount = () => {
 
     const { user } = useSelector((state:any)=>state.userInfo)
+    
     const dispatch = useDispatch();
     const ProfileImg:any = useRef()
     const [profile, setProfile] = React.useState<File[]>([]);
@@ -90,15 +95,23 @@ const ManageAccount = () => {
         const imgBase:any = await toBase64(profile[0]);
         await uploadString(profileRef,imgBase,'data_url').then(async()=>{
             const downloadURL = await getDownloadURL(profileRef);
+            console.log(downloadURL);
+            
             let obj = {
                 profile: downloadURL,
                 name: data.get("name"),
                 about: data.get("about"),
                 category:category,
                 social: data.get("social"),
-                userId:user
+                userId:users
             };
             const response = await userProfileUpdate(obj)
+            if(response.status === true){
+                setSuccessMsg(response.message)
+            }else{
+                setErrMsg(response.message)
+            }
+        
         })
         console.log(profile[0].name)
     }
@@ -108,6 +121,7 @@ const ManageAccount = () => {
     return (  
         <>
             <Navbar/>
+            <ToastContainer/>
             <Container>
                 <Grid item container sx={{display:'flex',mt:11}}>
                     <Grid item md={2.5} sx={{display: { xs: 'none', sm: 'none', md: 'block'} }}>
@@ -146,12 +160,20 @@ const ManageAccount = () => {
                                                 justifyContent:'center',
                                                 alignItems:'center',
                                                 cursor:'pointer',
-                                            }} src={profile.length>0 ? URL?.createObjectURL(profile[0]):""}  alt="" />
+                                            }} src={profile.length>0 ? URL?.createObjectURL(profile[0]):''}  alt="" />
                                                 <input 
                                                     type="file"
                                                     name="profile"
                                                     ref={ProfileImg}
-                                                    onChange={(e:any)=>setProfile(e.target.files)}
+                                                    onChange={(e:any)=>{
+                                                        let allowFormats = /(\.jpg|\.jpeg|\.png|\.gif)$/i
+                                                        let fileType = e.target.files[0].name
+                                                        if(!allowFormats.exec(fileType)){
+                                                            setErrMsg('Invalid file type: ')
+                                                        }else{
+                                                            setProfile(e.target.files)
+                                                        }
+                                                    }}
                                                     hidden
                                                 />
                                             </Box>
@@ -162,9 +184,11 @@ const ManageAccount = () => {
                                                 required
                                                 fullWidth
                                                 name="name"
-                                                label="Name"
+                                                // label="Name"
+                                                defaultValue={user ? user.name:'' }
                                                 type="text"
                                                 id="name"
+                                                multiline
                                                 autoComplete="new-name"
                                                 sx={{
                                                     "& .MuiInputLabel-root.Mui-focused": {color: '#4f4e4e'},
@@ -178,7 +202,8 @@ const ManageAccount = () => {
                                                 required
                                                 fullWidth
                                                 name="about"
-                                                label="About"
+                                                // label="About"
+                                                defaultValue={user ? user.about :''}
                                                 type="text"
                                                 id="about"
                                                 autoComplete="about"
@@ -210,7 +235,7 @@ const ManageAccount = () => {
                                                     <Select
                                                         labelId="demo-simple-select-label"
                                                         id="demo-simple-select"
-                                                        value={category}
+                                                        defaultValue={category}
                                                         label="What do you do?"
                                                         onChange={handleChange}
                                                         MenuProps={MenuProps}
@@ -228,10 +253,12 @@ const ManageAccount = () => {
                                                 required
                                                 fullWidth
                                                 id="social"
-                                                label="Website or social link"
+                                                // label="Website or social link"
+                                                defaultValue={user? user.socialLink :''}
                                                 placeholder="https://"
                                                 name="social"
                                                 autoComplete="social"
+                                                multiline
                                                 sx={{
                                                     "& .MuiInputLabel-root.Mui-focused": { color: "#4f4e4e" }, //styles the label
                                                     "& .MuiOutlinedInput-root.Mui-focused": {

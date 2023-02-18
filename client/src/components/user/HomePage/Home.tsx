@@ -5,7 +5,7 @@ import { Box, Button, Collapse, Container, FormControl, Grid, InputLabel, ListIt
 import Alert from '@mui/material/Alert';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import Stack from '@mui/material/Stack';
-import {FcIdea,FcCurrencyExchange,FcLikePlaceholder,FcBullish} from 'react-icons/fc/';
+import {FcIdea,FcCurrencyExchange,FcLikePlaceholder,FcBullish,FcApproval} from 'react-icons/fc/';
 import {IoChevronDown} from 'react-icons/io5';
 import ProfilePage from "../ProfilePage/Profile";
 import { ToastContainer, toast } from 'react-toastify';
@@ -88,7 +88,7 @@ const HomePage = () => {
                     const response = await tokenVerification(token);
                     console.log(response);
                     
-                    if(response.status == false || response.isBanned === true){
+                    if(response.status === false || response.isBanned === true){
                         router.push('/auth')
                     }else if (response.isAuthenticated){
                         dispatch(userDetails(response))
@@ -147,12 +147,18 @@ const HomePage = () => {
                                     <ProfilePage userData = {user}/>
                                     
                                     <Grid mt={3} xs={12}  p={3} boxShadow={1} sx={{borderRadius:'15px',border:'1px solid #dedede',lineBreak:'anywhere'}}>
-                                        <Box sx={{display:'flex',alignItems:'center'}}>
-                                            <FcIdea style={style}/>
-                                            <h3 style={{marginLeft:'5px'}}>Creator !</h3>
-                                        </Box>
+                                        { user?.creator === false ?
+                                            <Box sx={{display:'flex',alignItems:'center'}}>
+                                                <FcIdea style={style}/>
+                                                <h3 style={{marginLeft:'5px'}}>Creator !</h3>
+                                            </Box> :
+                                            <Box sx={{display:'flex',alignItems:'center'}}>
+                                                <FcApproval style={style}/>
+                                                <h3 style={{marginLeft:'5px'}}>Creator !</h3>
+                                            </Box>
+                                        }
 
-                                        <Grid mt={1} xs={12}>
+                                        { user?.creator === false && <Grid mt={1} xs={12}>
                                             <Typography>If you want to become a creator... ?</Typography>
                                             <Typography sx={{fontSize:'15px',color:'#4e4f4f',fontWeight:'500'}}>
                                                 You needs permission to access the creaters features in yours account that only an admins  can grand.
@@ -209,7 +215,7 @@ const HomePage = () => {
                                                 </Modal>
                                             </Box>
 
-                                        </Grid>         
+                                        </Grid>}       
                                     </Grid>
                                     
                                     <Grid mt={3} xs={12}  p={3} boxShadow={1} sx={{borderRadius:'15px',border:'1px solid #dedede'}}>

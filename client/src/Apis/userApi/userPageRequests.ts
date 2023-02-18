@@ -13,13 +13,22 @@ export const userPages = async (username:string) => {
     }
 }
 
-export const uploadCoverImage = async (img:string,token:string) =>{
+export const uploadCoverImage = async (img:string,token:string) => {
     try {
         const {data} = await userApi.patch('/upload-cover',{'image':img},{headers:{'accesstoken':token}})
         console.log(data);
         return data;
     } catch (error) {
         console.log(error);
+    }
+}
+
+export const userFollow = async (createrId:string, token:string) => {
+    try {
+        const {data} = await userApi.patch('/follow',{'createrId':createrId},{headers:{'accesstoken':token}})
+        return data;
+    } catch (error) {
+        
     }
 }
 
@@ -33,9 +42,9 @@ export const uploadPost = async (formData:any,token:string) =>{
 }
 
 
-export const getUserFeeds = async (token:string) => {
+export const getUserFeeds = async (username:string,token:string) => {
     try {
-        const {data} = await userApi.get('/posts',{headers:{'accesstoken':token}})
+        const {data} = await userApi.get(`/posts?username=${username}`,{headers:{'accesstoken':token}})
         return data;
     } catch (error) {
         console.log(error);
@@ -99,6 +108,24 @@ export const commentsLikes = async (postId:string,commentId:string,token:string)
 export const deleteComments = async (commentId:string) => {
     try {
         const {data} = await userApi.delete(`/delete-comments?commentId=${commentId}`);
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const getAllCreaters = async () => {
+    try {
+        const {data} = await userApi.get('/creaters');
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const searchCreaters = async (search:string) => {
+    try {
+        const {data} = await userApi.get(`/search?explore=${search}`)
         return data;
     } catch (error) {
         console.log(error);
