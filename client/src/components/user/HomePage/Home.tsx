@@ -88,9 +88,9 @@ const HomePage = () => {
                     const response = await tokenVerification(token);
                     console.log(response);
                     
-                    if(response.status === false || response.isBanned === true){
+                    if(response?.status === false || response?.isBanned === true){
                         router.push('/auth')
-                    }else if (response.isAuthenticated){
+                    }else if (response?.isAuthenticated){
                         dispatch(userDetails(response))
                         // router.push('/dashboard')
                         console.log(response);

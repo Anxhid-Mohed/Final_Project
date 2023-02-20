@@ -1,8 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 import { Avatar, Box, Button, CssBaseline, Fade, Grid, IconButton, List, ListItem, ListItemAvatar, ListItemText, Modal, Stack, TextField, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import {IoSettingsOutline } from 'react-icons/io5'
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import {useRouter} from "next/router";
+import Link from "next/link";
 
 const ModalStyle = {
     position: 'absolute' as 'absolute',
@@ -28,6 +30,8 @@ const ProfilePage:React.FC<{userData?: {
     profile:string,
     coverImage:string,
     category:string,
+    followers:any,
+    followings:any,
     isVerified:boolean,
     isBanned:boolean,
     disabled:boolean,
@@ -36,6 +40,7 @@ const ProfilePage:React.FC<{userData?: {
 
     const [followers, setFollowers] = React.useState(false)
     const [followings, setFollowings] = React.useState(false)
+    const router = useRouter()
 
     const style = { color:'#303030', fontSize: "1.8em" }
     const URL = process.env.NEXT_PUBLIC_USER_API as string
@@ -91,8 +96,8 @@ const ProfilePage:React.FC<{userData?: {
                         alignItems="flex-start"
                         spacing={10}
                     >
-                        <a onClick={()=>setFollowers(true)}><Typography>0<span style={{marginLeft:'4px'}}>Followers</span></Typography></a>
-                        <a onClick={()=>setFollowings(true)}><Typography>0<span style={{marginLeft:'4px'}}>Following</span></Typography></a>
+                        <a onClick={()=>setFollowers(true)}><Typography>{userData?.followers.length}<span style={{marginLeft:'4px'}}>Followers</span></Typography></a>
+                        <a onClick={()=>setFollowings(true)}><Typography>{userData?.followings.length}<span style={{marginLeft:'4px'}}>Following</span></Typography></a>
                     </Stack>
                 </Grid>
                 <Modal
@@ -110,15 +115,29 @@ const ProfilePage:React.FC<{userData?: {
                                 <Box sx={{ pb: 3,height: "375px" }} >
                                     <CssBaseline />  
                                     <List sx={{borderBottom:'1px solid #d6d6d6'}} >
-                                        <ListItem button >
-                                            <ListItemAvatar>
-                                                <Avatar alt="Profile Picture" src='' />
-                                            </ListItemAvatar>
-                                            <ListItemText sx={{lineBreak:'auto'}} primary={'kjsdbcjsd'} secondary={'kjnckjdsnckjas'} />
-                                            <Button>
-                                                Follow
-                                            </Button>
-                                        </ListItem>
+                                        {userData?.followers?.map((follower:any)=>{
+                                            return(
+                                                <Link legacyBehavior key={follower._id} href={`/${follower.username}`}>
+                                                <ListItem button >
+                                                    <ListItemAvatar>
+                                                        <Avatar alt="Profile Picture" src={follower ? follower.profile:''} />
+                                                    </ListItemAvatar>
+                                                    <ListItemText sx={{lineBreak:'auto'}} primary={follower ? follower.username:''} secondary={follower ? follower.name:''} />
+                                                    <Button 
+                                                        sx={{
+                                                            backgroundColor:'#f0eded',
+                                                            "&:hover": { backgroundColor: "#f0ered"},
+                                                            textTransform: 'none',
+                                                            borderRadius: 2,
+                                                            color:'#7e8380',
+                                                        }}>
+                                                        profile
+                                                    </Button>
+                                                </ListItem>
+                                                </Link>
+                                            )
+                                        })
+                                        }
                                     </List> 
                                 </Box>
                             </Box>
@@ -140,15 +159,29 @@ const ProfilePage:React.FC<{userData?: {
                                 <Box sx={{ pb: 3,height: "375px" }} >
                                     <CssBaseline />  
                                     <List sx={{borderBottom:'1px solid #d6d6d6'}} >
-                                        <ListItem button >
-                                            <ListItemAvatar>
-                                                <Avatar alt="Profile Picture" src='' />
-                                            </ListItemAvatar>
-                                            <ListItemText sx={{lineBreak:'auto'}} primary={'kjsdbcjsd'} secondary={'kjnckjdsnckjas'} />
-                                            <Button>
-                                                unfollow
-                                            </Button>
-                                        </ListItem>
+                                        {userData?.followings?.map((following:any)=>{
+                                            return(
+                                                <Link legacyBehavior key={following._id} href={`/${following.username}`}>
+                                                <ListItem button >
+                                                    <ListItemAvatar>
+                                                        <Avatar alt="Profile Picture" src={following ? following.profile:''} />
+                                                    </ListItemAvatar>
+                                                    <ListItemText sx={{lineBreak:'auto'}} primary={following ? following.username:''} secondary={following ? following.name:''} />
+                                                    <Button 
+                                                    sx={{
+                                                        backgroundColor:'#f0eded',
+                                                        "&:hover": { backgroundColor: "#f0ered"},
+                                                        textTransform: 'none',
+                                                        borderRadius: 2,
+                                                        color:'#7e8380',
+                                                    }}>
+                                                        profile
+                                                    </Button>
+                                                </ListItem>
+                                                </Link>
+                                            )
+                                        })
+                                    }
                                     </List> 
                                 </Box>
                             </Box>

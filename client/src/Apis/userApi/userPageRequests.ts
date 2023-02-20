@@ -1,15 +1,14 @@
-import { userApi } from "@/utils/apis";
+import { userApi, userApis } from "@/utils/apis";
 
 import { AxiosError } from "axios";
 
 
 export const userPages = async (username:string) => {
     try {
-        const {data} = await userApi.get(`/page?username=${username}`)
-        return data
+        const {data} = await userApis.get(`/page?username=${username}`)
+        return data;
     } catch (error) {
         console.log(error);
-        
     }
 }
 

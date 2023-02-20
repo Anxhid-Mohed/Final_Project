@@ -10,7 +10,7 @@ import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import {AiOutlineEdit,AiOutlineInfoCircle} from 'react-icons/ai'
 import {MdDeleteOutline, MdFavoriteBorder} from 'react-icons/md'
 import { commentPost, commentsLikes, deleteComments, editPost, getPostComments, likePost, removePost } from "@/Apis/userApi/userPageRequests";
-import { setSuccessMsg, setErrMsg } from "@/pages/posts";
+import { setSuccessMsg, setErrMsg } from "@/pages/integration";
 import { useSelector } from "react-redux";
 
 

@@ -43,12 +43,12 @@ const userSchema = new Schema({
         }
     ],
 
-    followings:[{
-        userId:{
+    followings:[
+        {
             type:Schema.Types.ObjectId,
             ref:'users'
         }
-    }],
+    ],
 
     isVerified:{
         type:Boolean,

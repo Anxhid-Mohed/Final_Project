@@ -85,7 +85,7 @@ const SideBar = ({userData}:any) => {
                 </Link>
 
                 <h6 style={{marginLeft:'5px'}}>SETTINGS</h6>
-                <Link legacyBehavior href=''>
+                <Link legacyBehavior href='/integration'>
                     <Box sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,mt:1,":hover":{backgroundColor:'#e8e8e8'}}}>
                         <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                             <BoltIcon/>

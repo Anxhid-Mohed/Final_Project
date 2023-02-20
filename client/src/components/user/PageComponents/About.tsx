@@ -2,8 +2,9 @@ import { Box, Typography } from "@mui/material";
 
 const About = (data:any) => {
     return (  
-       <Box boxShadow={2} sx={{
+       <Box boxShadow={1} sx={{
         borderRadius:'20px',
+        border:'1px solid #dedede',
         py:'3px'
          }}>
             <Box p={2} sx={{color:'#333232'}}>

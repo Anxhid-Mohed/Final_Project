@@ -12,7 +12,7 @@ import { userProfileUpdate } from "@/Apis/userApi/userManagement";
 import { tokenVerification } from "@/Apis/userApi/userAuthRequest";
 import router from "next/router";
 import { userDetails } from "@/redux/userSlice";
-import { setSuccessMsg } from "./posts";
+import { setSuccessMsg } from "./integration";
 import { setErrMsg } from "@/components/user/PostPage/Post";
 
 

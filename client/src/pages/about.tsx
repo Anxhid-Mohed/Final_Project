@@ -40,9 +40,9 @@ const About = () => {
                     const response = await tokenVerification(token);
                     console.log(response);
                     
-                    if(response.status == false || response.isBanned === true){
+                    if(response?.status === false || response?.isBanned === true){
                         router.push('/auth')
-                    }else if (response.isAuthenticated  && response.isBanned === false){
+                    }else if (response?.isAuthenticated  && response?.isBanned === false){
                         dispatch(userDetails(response))
                         console.log(response);
                         

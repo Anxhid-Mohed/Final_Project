@@ -44,7 +44,7 @@ export const signin = async (formData:any) => {
 
 export const tokenVerification = async (token:string) => {
     try {
-        const {data} = await userApi.post(`/verify-token`,{},{headers:{'accesstoken':token}})
+        const {data} = await userApi.post(`/verify-token`,{})
         return data;      
     }catch(error){
         console.log(error);

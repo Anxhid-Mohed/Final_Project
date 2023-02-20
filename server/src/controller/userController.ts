@@ -7,7 +7,7 @@ import verificationModel from '../model/verificationToken';
 import postsModel from '../model/postsSchema';
 import requestModel from '../model/requestSchema';
 import commentsModel from '../model/commentsSchema';
-import { Console } from 'console';
+import IntegrationsModel from '../model/IntegrationsSchema';
 
 //---> Authentication-validation <---//
 export const verifyAuth = async(req:Request,res:Response) => {
@@ -202,6 +202,7 @@ export const profileManagement = async (req:Request,res:Response) => {
 export const userPage = async (req:Request,res:Response) => {
     try {
         const username = req.query.username;
+        console.log(username);
         const user = await userModel.findOne({username:username})
         console.log('--------------------------------',user);
         if(user){
@@ -295,7 +296,7 @@ export const userFollowAndUnFollow = async (req:Request, res:Response) => {
         const userId = Object(req.userId);
         const createrId = req.body.createrId;
         const user = await userModel.findById(userId);
-        const exists = user?.followings.some((el:any) => el.userId == createrId);
+        const exists = user?.followings.some((el:any) => el._id == createrId);
         if(createrId && userId){
             if(!exists){
                 //Add to users followings list
@@ -330,6 +331,8 @@ export const userFollowAndUnFollow = async (req:Request, res:Response) => {
         res.status(500).json({status:false,message:'internal server error'})
     }
 }
+
+
 
 export const uploadPosts = async (req:Request , res:Response) => {
     try {
@@ -477,7 +480,6 @@ export const commentsLikes = async (req:Request, res:Response) => {
             const comment = await commentsModel.findOne({_id:commentId})
             comment?.likes.push(likeObj)
             comment?.save().then((response)=> {
-                console.log(response,'kkkkkkkkkk');
                 res.status(200).json({status:true,action:'liked',message:'like added successfully'})
             })
         }else{
@@ -537,11 +539,78 @@ export const searchCreaters = async (req:Request, res:Response) => {
     }
 }
 
+export const integrateBankAcc = async (req:Request, res:Response) => {
+    try {
+        const userId = req.userId;
+        console.log(userId);
+        const { name,accountNo,Ifsc,branch,transactionId } = req.body;
+        if(name && accountNo && Ifsc && branch){
+            const doc = new IntegrationsModel({
+                userId: userId,
+                Fullname:name,
+                AccountNumber:accountNo,
+                IFSC:Ifsc,
+                Branch:branch,
+                TransactionId:transactionId || null
+            })
+            doc.save();
+            res.status(200).json({status:true,message:'integration success'})
+        }else{
+            res.json({status:false,message:'integration error'})
+        }
+    } catch (error) {
+        res.status(500).json({status:false,message:'internal server error'})
+    }
+}
+
+export const editUserBankInfo = async (req:Request, res:Response) => {
+    try {
+        const userId = req.userId
+
+        const { name,accountNo,Ifsc,branch,transactionId } = req.body;
+        console.log(name,accountNo,Ifsc,branch,transactionId);
+        
+        if(name && accountNo && Ifsc && branch){
+            await IntegrationsModel.findOneAndUpdate({userId},{
+                Fullname:name,
+                AccountNumber:accountNo,
+                IFSC:Ifsc,
+                Branch:branch,
+                TransactionId:transactionId || null
+            })
+            res.status(200).json({status:true,message:'edit successfull'})
+        }else{
+            res.json({status:false,message:'process failed'})
+        }
+    } catch (error) {
+        res.status(500).json({status:false,message:'internal server error'})
+    }
+}
+
+export const getUserBankInfo = async (req:Request, res:Response) => {
+    try {
+        const userId = req.userId
+        if(userId){
+            const data = await IntegrationsModel.findOne({userId})
+            console.log(data,'------------------');
+            if(data){
+                res.status(200).json({status:true,data:data,message:'success'})
+            }else{
+                res.json({status:false,data:null,message:'failed to find '})
+            }
+        }else{
+            res.json({status:false,message:'failed to find '})
+        }
+    } catch (error) {
+        res.status(500).json({status:false,message:'internal server error'})
+    }
+}
+
 //---> Get User Datas <---//
 export const getDetails = async (req:Request,res:Response) => {
     try {
         const userId = req.userId
-        const userData = await userModel.findById(userId)
+        const userData = await userModel.findById(userId).populate(['followers','followings'])
         console.log(userData);
         
         if (userData){
@@ -565,7 +634,7 @@ export const getDetails = async (req:Request,res:Response) => {
                 'isAuthenticated':true
             }) 
         }else{
-            res.json({data:undefined,message: 'User not found'});
+            res.json({status:false,data:undefined,message: 'User not found'});
         }
     } catch (error) {
         const message = error instanceof Error ? error.message : "Unknown error."

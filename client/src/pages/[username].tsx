@@ -13,15 +13,16 @@ import { tokenVerification } from "@/Apis/userApi/userAuthRequest";
 import { useRouter } from "next/router";
 import { userDetails } from "@/redux/userSlice";
 import { useDispatch ,useSelector} from "react-redux";
+import Donate from "@/components/user/PageComponents/Donate";
 
 
 
 
 export const getServerSideProps = async (context:any) => {
     try {
-        const username = context.params.username
+        const username = context.params.username 
         const response = await userPages(username)
-        console.log(response);
+       
         
         return {
             props :{datas:response.data}
@@ -33,7 +34,7 @@ export const getServerSideProps = async (context:any) => {
 
 const userPage = (datas:any) => {
 
-    console.log(datas,'---------------');
+    // console.log(datas,'---------------');
     
     const {user} = useSelector((state:any)=>state.userInfo)
     const dispatch = useDispatch()
@@ -42,7 +43,12 @@ const userPage = (datas:any) => {
     const [coverImg, setCoverImg] = React.useState<File[]>([]);
     const [about, setAbout] = React.useState(true);
     const [post, setPost] = React.useState(false);
-    const [isFollowed, setIsFollowed] = React.useState(user?.followings.some((element:any)=>element.userId === datas?.datas._id))
+    const [isFollowed, setIsFollowed] = React.useState(false)
+
+    useEffect(()=>{
+        setIsFollowed(user?.followings.some((el:any)=>el._id === datas?.datas?._id))
+    },[user])
+    
 
     useEffect(()=>{
         let token = localStorage.getItem('userToken')
@@ -51,10 +57,10 @@ const userPage = (datas:any) => {
                 async () => {
 
                     const response = await tokenVerification(token);
-                    if(response.status == false || response.isBanned === true){
+                    if(response?.status === false || response?.isBanned === true){
                         router.push('/auth')
-                    }else if (response.isAuthenticated){
-                        console.log(response);
+                    }else if (response?.isAuthenticated){
+                        console.log(response,'===------------------------------------------===========');
                         dispatch(userDetails(response))
                     }
                 }
@@ -159,7 +165,7 @@ const userPage = (datas:any) => {
 
                     {user?.userId != datas?.datas._id && 
                         <>
-                        {isFollowed ?
+                        { isFollowed?
                             <Box m={0.3}>
                                 <Button  
                                 onClick={()=>handleFollow(datas.datas._id)}
@@ -168,7 +174,8 @@ const userPage = (datas:any) => {
                                     "&:hover": { backgroundColor: "#f0eded"},
                                     textTransform: 'none',
                                     borderRadius: 3,
-                                    color:'white',
+                                    color:'#000',
+                                    fontWeight:550,
                                     width:{md:'8.2rem'},
                                 }}>Unfollow</Button>
                             </Box>:
@@ -181,7 +188,8 @@ const userPage = (datas:any) => {
                                     textTransform: 'none',
                                     borderRadius: 3,
                                     color:'white',
-                                    width:{md:'8.2rem'},
+                                    fontSize:{sm:'15px'},
+                                    width:{sm:'6.2rem',md:'8.2rem'},
                                 }}>Follow</Button>
                             </Box>
                         }
@@ -222,9 +230,9 @@ const userPage = (datas:any) => {
                 <Grid xs={12} sm={12} md={6} m={1} sx={{ width:{ xs:'100%' , sm:'100%' , md:'50%' } }} >
                     <About data={datas?.datas}/>
                 </Grid>
-                {datas?.datas._id === user?.userId && <Grid xs={12} sm={12} md={6} m={1} sx={{ width:{ xs:'100%' , sm:'100%' , md:'50%' } }} >
-                    <AddPosts data={datas?.datas.profile}/>
-                </Grid>}
+                <Grid xs={12} sm={12} md={6} m={1} sx={{ width:{ xs:'100%' , sm:'100%' , md:'50%' } }} >
+                    {datas?.datas._id === user?.userId ? <AddPosts data={datas?.datas.profile}/>:<Donate/>}
+                </Grid>
             </Grid>}
 
             {post && <Post username={datas?.datas.username} profile={datas?.datas.profile}/>}

@@ -67,8 +67,7 @@ export default function CompletePage() {
     const { name, username, about, social } = obj;
     if (name && username && about && social) {
       let regName = /^[a-zA-Z]{2,40}( [a-zA-Z]{2,40})+$/;
-      let regUrl =
-        /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+      let regUrl = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
       setRequired("");
       if (regName.test(name.toString())) {
         setName(false);
