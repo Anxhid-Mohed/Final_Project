@@ -50,6 +50,16 @@ export const getUserFeeds = async (username:string,token:string) => {
     }
 }
 
+
+export const getAllFeeds = async ()=>{
+    try {
+        const {data} = await userApi.get('/feeds')
+        return data;
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 export const removePost = async (id:string) => {
     try {
         const {data} = await userApi.delete(`/delete-post?id=${id}`)
@@ -71,6 +81,15 @@ export const editPost = async (id:string,changes:string) => {
 export const likePost = async (id:string,token:string) => {
     try {
         const {data} = await userApi.patch('/like-post',{'postId':id},{headers:{'accesstoken':token}})
+        return data;
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const reportPost = async (postId:string,suggestion:string) => {
+    try {
+        const {data} = await userApi.post('/report',{postId,suggestion})
         return data;
     } catch (error) {
         console.log(error)

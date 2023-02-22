@@ -66,3 +66,12 @@ export const requestRejection = async (reqId:string) => {
         console.log(error);
     }
 }
+
+export const reportLists= async () => {
+    try {
+        const {data} = await adminApi.get('/report');
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+} 

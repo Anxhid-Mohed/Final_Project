@@ -41,6 +41,15 @@ export const signin = async (formData:any) => {
     }
 }
 
+export const resendEmail = async (userId:string) => {
+    try {
+        const {data} = await userApi.post('/resend',{userId})
+        return data;
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 
 export const tokenVerification = async (token:string) => {
     try {

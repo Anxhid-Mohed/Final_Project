@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Card, CardHeader, Avatar, IconButton, CardMedia, CardContent, Typography, CardActions, Box, Menu, MenuItem, Modal, Button, TextField, Fade, ListItem, CssBaseline, List, ListItemAvatar, ListItemText } from "@mui/material";
+import { Card, CardHeader, Avatar, IconButton, CardMedia, CardContent, Typography, CardActions, Box, Menu, MenuItem, Modal, Button, TextField, Fade, ListItem, CssBaseline, List, ListItemAvatar, ListItemText, FormControl, InputLabel, Select } from "@mui/material";
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import TextsmsIcon from '@mui/icons-material/Textsms';
 import ShareIcon from '@mui/icons-material/Share';
@@ -7,9 +7,11 @@ import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded
 import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {AiOutlineEdit,AiOutlineInfoCircle} from 'react-icons/ai'
 import {MdDeleteOutline, MdFavoriteBorder} from 'react-icons/md'
-import { commentPost, commentsLikes, deleteComments, editPost, getPostComments, likePost, removePost } from "@/Apis/userApi/userPageRequests";
+import { commentPost, commentsLikes, deleteComments, editPost, getPostComments, likePost, removePost, reportPost } from "@/Apis/userApi/userPageRequests";
 import { setSuccessMsg, setErrMsg } from "@/pages/integration";
 import { useSelector } from "react-redux";
 
@@ -39,6 +41,25 @@ const commentModalStyle = {
     p: 4,
 };
 
+const ITEM_HEIGHT = 38;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+const names = [
+    'Spam or Scam',
+    'Harassment or bullying',
+    'Hate speech',
+    '18+ Pornography ',
+    'Violence or harm',
+];
+
 const FeedCard = ({data,setUpload,upload}:any) => {
 
     const {user} = useSelector((state:any)=>state.userInfo)
@@ -46,6 +67,8 @@ const FeedCard = ({data,setUpload,upload}:any) => {
     const [ comment, setComment] = React.useState('')
     const [commentsData, setCommentsData] = React.useState([])
     const [commentOpen, setCommentOpen] = React.useState(false)
+    const [reportOpen, setReportOpen] = React.useState(false)
+    const [suggestions, setSuggestions] = React.useState('')
     const [isLiked, setIsLiked] = React.useState(data?.like?.some((el: any) => el.userId === user.userId))
     const [changes, setChanges] = React.useState(data?.caption)
     const [ update , setUpdate] = React.useState(false)
@@ -163,11 +186,29 @@ const FeedCard = ({data,setUpload,upload}:any) => {
         }
     }
 
+    const handleReportPost = async () => {
+        try {
+            const postId = data._id;
+            const response = await reportPost(postId,suggestions)
+            console.log(response.message)
+            if(response?.status === true){
+                setSuccessMsg(response.message)
+                setReportOpen(false)
+            }else{
+                setErrMsg(response.message)
+                setReportOpen(false)
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     const styles = {marginRight:'6px'}
     return ( 
         
         <> 
            <Card  sx={{ maxWidth:540,boxShadow:4,mt:2,ml:.5,borderRadius:'8px'}}>
+           <ToastContainer/>
                 <CardHeader
                     avatar={
                         <Avatar alt="Travis Howard" src={ data ? data.userId.profile :'DP'}/>
@@ -198,7 +239,10 @@ const FeedCard = ({data,setUpload,upload}:any) => {
                                     <MenuItem onClick={handleDelete}><MdDeleteOutline style={styles} />Delete</MenuItem>
                                 </>
                             }
-                            <MenuItem onClick={handleClose}><AiOutlineInfoCircle style={styles}/>Report</MenuItem>
+                            <MenuItem onClick={()=>{
+                                handleClose;
+                                setReportOpen(true)
+                            }}><AiOutlineInfoCircle style={styles}/>Report</MenuItem>
                         </Menu>
                     </>
                     }
@@ -392,6 +436,61 @@ const FeedCard = ({data,setUpload,upload}:any) => {
                     </Box>
                 </Fade>
             </Modal>
+
+            {/* report modal */}
+            <Modal
+                open={reportOpen}
+                onClose={()=>setReportOpen(false)}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >   
+                <Fade in={reportOpen}>
+                    <Box sx={style}>
+                        <Typography id="modal-modal-title" variant="h6" component="h2">
+                            Choose a reason for reporting
+                        </Typography>
+                        <Box mt={2}>
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label"
+                                >Suggestions</InputLabel>
+                                <Select 
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={suggestions}
+                                    label="Suggestions"
+                                    onChange={(e)=>setSuggestions(e.target.value)}
+                                    MenuProps={MenuProps}
+                                    
+                                >
+                                    {names.map((name) =>(
+                                        <MenuItem key={name} value={name}>
+                                            {name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                                <Button
+                                    onClick={handleReportPost}
+                                    fullWidth
+                                    type="submit"
+                                    variant="contained"
+                                    sx={{
+                                        mt: 1,
+                                        mb: 2,
+                                        borderRadius: "15px",
+                                        height: "42px",
+                                        backgroundColor: "#eb1e44",
+                                        "&:hover": { backgroundColor: "#eb1e44"},
+                                        textTransform: "none",
+                                    }}
+                                    >
+                                    report
+                                </Button>
+                            </FormControl>
+                        </Box>
+                    </Box>
+                </Fade>
+            </Modal>
+
         </>
     );
 }

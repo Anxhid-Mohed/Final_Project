@@ -97,7 +97,6 @@ export default function CompletePage() {
                   theme: "colored",
                 });
                 setTimeout(() => {
-                  localStorage.removeItem("userId");
                   router.push("/activate");
                 }, 1200);
               } else {

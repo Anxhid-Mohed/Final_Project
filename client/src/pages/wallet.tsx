@@ -1,12 +1,62 @@
+import React from "react";
 import Navbar from "@/components/user/NavBar/NavBar"
 import SideBar from "@/components/user/SideBar/SideBar";
 import styles from '@/styles/Explore.module.css';
 import {BsCurrencyDollar} from 'react-icons/bs';
-import {FcCurrencyExchange,FcLikePlaceholder} from 'react-icons/fc'
+import {FcCurrencyExchange,FcOk} from 'react-icons/fc'
+import { BsEmojiFrown } from 'react-icons/bs'
 import { Avatar, Box, Button, Container, CssBaseline, Grid, List, ListItem, ListItemAvatar, ListItemText, Typography } from "@mui/material"
-import Link from "next/link";
+import { useEffect } from "react";
+import { userWallet } from "@/Apis/userApi/userRequests";
+import { useDispatch, useSelector } from "react-redux";
+import { tokenVerification } from "@/Apis/userApi/userAuthRequest";
+import { useRouter } from "next/router";
+import { userDetails } from "@/redux/userSlice";
+import moment from "moment";
+
 
 const Wallet = () => {
+
+    const {user} = useSelector((state:any)=>state.userInfo)
+    const dispatch = useDispatch()
+
+    const router = useRouter()
+    const [data,setData] = React.useState<{userId: string; amount: number; donators:any}>()
+
+    useEffect(()=>{
+        let token = localStorage.getItem('userToken')
+        if(token){
+           (
+                async () => {
+
+                    const response = await tokenVerification(token);
+                    console.log(response);
+                    if(response?.status === false || response?.isBanned === true){
+                        router.push('/auth')
+                    }else if (response?.isAuthenticated && response?.isBanned === false){
+                        dispatch(userDetails(response))
+                        
+                    }else{
+                        router.push('/auth')
+                    }
+                }
+            )()
+        }else{
+          router.push('/auth')
+        }
+    },[])
+
+    useEffect(()=>{
+        (
+            async()=>{
+                const response = await userWallet()
+                if(response?.status === true){
+                    console.log(response.data)
+                    setData(response.data);
+                }
+            }
+        )()
+    },[])
 
     const style = {fontSize:'41px'}
     return (  
@@ -15,12 +65,13 @@ const Wallet = () => {
             <Container>
                 <Grid item container sx={{display:'flex',mt:11}}>
                     <Grid item md={2.5} sx={{display: { xs: 'none', sm: 'none', md: 'block'} }}>
-                        <SideBar/>
+                        <SideBar userData={user?.username}/>
                     </Grid>
                     <Grid item xs={12} sm={12} md={9.5} sx={{lineBreak:'auto'}}>
                         <Container maxWidth='lg'>
-                            <Grid item xs={12} sx={{width:'100%'}}></Grid>
+                            <Grid item xs={12} sx={{width:'100%'}}>
                                 <h3 style={{marginTop:'14px',fontWeight:'800'}}>Wallet And Payouts</h3>
+                            </Grid>
                             <Grid item mt={3} mb={2} xs={12}  p={3.5} sx={{borderRadius:'15px',border:'1px solid #dedede',lineBreak:'auto'}}>
                                 <Grid item xs={12} sx={{display:'flex',alignItems:'center'}}>
                                     <FcCurrencyExchange style={{fontSize:'23px'}}/>
@@ -31,12 +82,12 @@ const Wallet = () => {
                                 <Grid item xs={12} sx={{display:'flex',alignItems:'center',mt:1}}>
                                     <BsCurrencyDollar style={style}/>
                                     <Typography sx={{fontSize:'44px',fontWeight:'600'}} letterSpacing={1.5}>
-                                        0
+                                        {data ? data?.amount : 0}
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={12} sx={{display:'flex',alignItems:'center',mt:1}}>
                                     <Typography> 
-                                      <span>100</span>  Donations
+                                      <span>{data ? data?.donators?.length : 0}</span>  Donations
                                     </Typography>
                                 </Grid>
                             </Grid>
@@ -47,8 +98,8 @@ const Wallet = () => {
                                 textAlign:'center',
                             }}
                             >
-                                <FcLikePlaceholder style={{fontSize:'30px'}}/>
-                                <Typography sx={{fontWeight:600,color:'#333232'}}>You dont have any supporters yet</Typography>
+                                <BsEmojiFrown style={{fontSize:'30px'}}/>
+                                <Typography sx={{fontWeight:600,color:'#333232'}}>Nothing here just yet! ☕</Typography>
                                 <Typography mt={1} sx={{color:'#333232'}}>Share your page with your audience to get started.</Typography>
                             </Grid>
                             <Grid item mt={3} mb={2} xs={12}  p={3.5} sx={{borderRadius:'15px',border:'1px solid #dedede',lineBreak:'auto'}}>
@@ -57,72 +108,9 @@ const Wallet = () => {
                                     <CssBaseline />  
                                     <List sx={{borderBottom:'1px solid #d6d6d6'}} >
                                         <ListItem button >
-                                            <ListItemAvatar>
-                                                <Avatar alt="Profile Picture" src=''/>
-                                            </ListItemAvatar>
-                                            <ListItemText sx={{lineBreak:'auto'}} primary={'bsdhcabvs'} />
-                                            <ListItemText sx={{lineBreak:'auto'}} secondary={'donated 10$ for you'} />
-                                            <FcLikePlaceholder style={{fontSize:'30px'}}/>
-                                        </ListItem>       
-                                    </List> 
-                                    <List sx={{borderBottom:'1px solid #d6d6d6'}} >
-                                        <ListItem button >
-                                            <ListItemAvatar>
-                                                <Avatar alt="Profile Picture" src=''/>
-                                            </ListItemAvatar>
-                                            <ListItemText sx={{lineBreak:'auto'}} primary={'bsdhcabvs'} />
-                                            <ListItemText sx={{lineBreak:'auto'}} secondary={'donated 10$ for you'} />
-                                            <FcLikePlaceholder style={{fontSize:'30px'}}/>
-                                        </ListItem>       
-                                    </List> 
-                                    <List sx={{borderBottom:'1px solid #d6d6d6'}} >
-                                        <ListItem button >
-                                            <ListItemAvatar>
-                                                <Avatar alt="Profile Picture" src=''/>
-                                            </ListItemAvatar>
-                                            <ListItemText sx={{lineBreak:'auto'}} primary={'bsdhcabvs'} />
-                                            <ListItemText sx={{lineBreak:'auto'}} secondary={'donated 10$ for you'} />
-                                            <FcLikePlaceholder style={{fontSize:'30px'}}/>
-                                        </ListItem>       
-                                    </List> 
-                                    <List sx={{borderBottom:'1px solid #d6d6d6'}} >
-                                        <ListItem button >
-                                            <ListItemAvatar>
-                                                <Avatar alt="Profile Picture" src=''/>
-                                            </ListItemAvatar>
-                                            <ListItemText sx={{lineBreak:'auto'}} primary={'bsdhcabvs'} />
-                                            <ListItemText sx={{lineBreak:'auto'}} secondary={'donated 10$ for you'} />
-                                            <FcLikePlaceholder style={{fontSize:'30px'}}/>
-                                        </ListItem>       
-                                    </List> 
-                                    <List sx={{borderBottom:'1px solid #d6d6d6'}} >
-                                        <ListItem button >
-                                            <ListItemAvatar>
-                                                <Avatar alt="Profile Picture" src=''/>
-                                            </ListItemAvatar>
-                                            <ListItemText sx={{lineBreak:'auto'}} primary={'bsdhcabvs'} />
-                                            <ListItemText sx={{lineBreak:'auto'}} secondary={'donated 10$ for you'} />
-                                            <FcLikePlaceholder style={{fontSize:'30px'}}/>
-                                        </ListItem>       
-                                    </List> 
-                                    <List sx={{borderBottom:'1px solid #d6d6d6'}} >
-                                        <ListItem button >
-                                            <ListItemAvatar>
-                                                <Avatar alt="Profile Picture" src=''/>
-                                            </ListItemAvatar>
-                                            <ListItemText sx={{lineBreak:'auto'}} primary={'bsdhcabvs'} />
-                                            <ListItemText sx={{lineBreak:'auto'}} secondary={'donated 10$ for you'} />
-                                            <FcLikePlaceholder style={{fontSize:'30px'}}/>
-                                        </ListItem>       
-                                    </List> 
-                                    <List sx={{borderBottom:'1px solid #d6d6d6'}} >
-                                        <ListItem button >
-                                            <ListItemAvatar>
-                                                <Avatar alt="Profile Picture" src=''/>
-                                            </ListItemAvatar>
-                                            <ListItemText sx={{lineBreak:'auto'}} primary={'bsdhcabvs'} />
-                                            <ListItemText sx={{lineBreak:'auto'}} secondary={'donated 10$ for you'} />
-                                            <FcLikePlaceholder style={{fontSize:'30px'}}/>
+                                            <ListItemText sx={{lineBreak:'auto'}} secondary={'Your 10$ payout is successfull'} />
+                                            <ListItemText sx={{lineBreak:'auto'}} secondary={moment(Date.now()).format("DD/MM/YYYY")} />
+                                            <FcOk style={{fontSize:'25px'}}/>
                                         </ListItem>       
                                     </List> 
                                     </Box>

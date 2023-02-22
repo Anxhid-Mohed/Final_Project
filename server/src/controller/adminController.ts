@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import adminModel from '../model/adminSchema';
 import userModel from '../model/userSchema';
 import requestsModel from '../model/requestSchema';
+import reportsModel from '../model/reportsSchema';
 
 
 //---> Admin Sign in <---// 
@@ -124,6 +125,17 @@ export const requestsRejection = async (req: Request, res: Response) => {
             await requestsModel.findByIdAndDelete({_id:requester._id})
             res.status(200).json({status:true,message:'request rejected successfully'})
         }    
+    } catch (error) {
+        res.status(500).json({message:'Internal Server Error'})
+    }
+}
+
+export const reportsList = async (req: Request, res: Response) => {
+    try {
+        const reports = await reportsModel.find({}).populate(['userId' , 'postId'])
+        console.log(reports)
+        if(!reports)return res.json({status:false,message:'No reports found'})
+        res.status(200).json({status:true,data:reports,message:'success'})
     } catch (error) {
         res.status(500).json({message:'Internal Server Error'})
     }

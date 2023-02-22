@@ -47,7 +47,7 @@ const SideBar = ({userData}:any) => {
                 {/* </Link> */}
                 <h6 style={{marginLeft:'5px'}} >PUBLISH</h6>
 
-                <Link legacyBehavior href=''>
+                <Link legacyBehavior href='/feeds'>
                     <Box sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,mt:1,":hover":{backgroundColor:'#e8e8e8'}}}>
                         <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                             <AutoAwesomeIcon/>
@@ -56,7 +56,7 @@ const SideBar = ({userData}:any) => {
                     </Box>
                 </Link>
 
-                <Link legacyBehavior href=''>
+                <Link legacyBehavior href='/explore'>
                     <Box sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,":hover":{backgroundColor:'#e8e8e8'}}}>
                         <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                             <SearchIcon/>
@@ -93,7 +93,7 @@ const SideBar = ({userData}:any) => {
                         </Box>
                     </Box>
                 </Link>
-                <Link legacyBehavior href=''>
+                <Link legacyBehavior href='/wallet'>
                     <Box sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,":hover":{backgroundColor:'#e8e8e8'}}}>
                         <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                             <CurrencyExchangeIcon/>

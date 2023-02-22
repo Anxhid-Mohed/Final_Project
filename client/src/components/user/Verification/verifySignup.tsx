@@ -30,6 +30,7 @@ export const VerifySignup = () => {
                             theme: "colored",
                         });
                         setTimeout(()=>{
+                            localStorage.removeItem("userId");
                             localStorage.setItem('userToken',response.token)
                             router.push('/dashboard')
                         },1000)

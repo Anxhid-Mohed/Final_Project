@@ -8,6 +8,8 @@ import postsModel from '../model/postsSchema';
 import requestModel from '../model/requestSchema';
 import commentsModel from '../model/commentsSchema';
 import IntegrationsModel from '../model/IntegrationsSchema';
+import donationModel from '../model/donationSchema';
+import reportsModel from '../model/reportsSchema';
 
 //---> Authentication-validation <---//
 export const verifyAuth = async(req:Request,res:Response) => {
@@ -77,12 +79,32 @@ export const userSignup = async(req:Request,res:Response) => {
             }) 
             const user = await userModel.findById(userId)
             const email = user?.email as string
+            const username = user?.username as string
             await nodemailer(userId,email)
-             res.status(200).json({status:true,'message':'success'})
+             res.status(200).json({status:true,data:username,message:'success'})
         }else{
             res.json({status:false,'message':'username already exists'})
         }
 
+    } catch (error) {
+        res.status(500).send({message:'Internal Server Error'})
+    }
+}
+
+//---> Resend Email <---//
+export const resendEmail = async (req:Request, res:Response) => {
+    try {
+        const userId = req.body.userId
+        const user = await userModel.findById(userId)
+        const email = user?.email as string
+        const isVerified = user?.isVerified
+        if(isVerified === false){
+            await verificationModel.findOneAndDelete(userId,{})
+            await nodemailer(userId,email)
+            res.status(200).send({status:true,message:'check your email for verification'})
+        }else{
+            res.json({status:false,message:'your already verified your account'})
+        }
     } catch (error) {
         res.status(500).send({message:'Internal Server Error'})
     }
@@ -372,6 +394,19 @@ export const getUserFeeds = async (req:Request, res:Response) => {
     }
 }
 
+export const getAllFeeds = async (req: Request, res: Response) => {
+    try {
+        const feeds = await postsModel.find().sort({createdAt: -1}).populate('userId')
+        if(feeds){
+            res.status(200).json({status:true,data:feeds,message:'success'})
+        }else{
+            res.json({status:false,message:'Oops! Something went wrong'})
+        }
+    } catch (error) {
+        res.status(500).json({status:false,message:'Internal Server'})
+    }
+}
+
 export const removePost = async (req:Request , res:Response) => {
     try {
         const postId = req.query.id
@@ -430,7 +465,35 @@ export const likePost = async (req:Request, res:Response) => {
     }
 }
 
-export const getPostComments = async (req:Request, res: Response) => {
+export const reportPost = async (req:Request, res:Response) => {
+    try {
+        const userId = req.userId
+        console.log(req.body,'------------')
+        const { postId,suggestion } = req.body
+        if(postId && suggestion){
+            const existReport = await reportsModel.findOne({userId:userId},{postId:postId})
+            console.log(existReport,'------')
+            if(!existReport){
+                const doc = new reportsModel({
+                    userId,
+                    postId,
+                    reason:suggestion
+                })
+                await doc.save().then((response:any)=>{
+                    res.status(200).json({status:true,message:'Your report has been submitted'})
+                })
+            }else{
+                res.json({status:false,message:'You already have a report'})
+            }
+        }else{
+            res.json({status:false,message:'failed'})
+        }
+    } catch (error) {
+        res.status(500).json({status:false,message:'Internal Server'})
+    }
+}
+
+export const getPostComments = async (req:Request, res:Response) => {
     try {
         const postId = req.query.id
         if(postId){
@@ -528,7 +591,7 @@ export const searchCreaters = async (req:Request, res:Response) => {
     try {
         const search = req.query.explore
         console.log(search);
-        const data = await userModel.find({username : {$regex: search }})
+        const data = await userModel.find({username : {$regex: search },creator:true})
         if(data){
             res.status(200).json({status:true,data:data,message:'success'})
         }else{
@@ -601,6 +664,55 @@ export const getUserBankInfo = async (req:Request, res:Response) => {
         }else{
             res.json({status:false,message:'failed to find '})
         }
+    } catch (error) {
+        res.status(500).json({status:false,message:'internal server error'})
+    }
+}
+
+export const ApproveDonation = async (req:Request , res:Response) => {
+    try {
+        const data = req.body.info
+        const creatorId = req.body.creatorId
+        const donorId = req.userId
+        console.log(data,'------------------',creatorId,'===============',donorId);
+        const creatorExist = await donationModel.findOne({userId:creatorId})
+        console.log(creatorExist,'---------')
+        let object = {
+            donorId:donorId,
+            amount:data.amount,
+            note:data.note
+        }
+        if(creatorExist){
+            const creator = await donationModel.findOne({userId:creatorId})
+            const amount = (parseInt(creator?.amount) + parseInt(data.amount))
+            const donation = await donationModel.findOneAndUpdate({userId:creatorId},{amount:amount})
+            donation?.donators.push(object)
+            await donation?.save().then((response)=>{
+                res.status(200).json({status:true, message:'Your donation is successfull'})
+            })
+        }else{
+            let doc = {
+                userId:creatorId,
+                amount:data.amount, 
+                donators:[object]
+            }
+            await donationModel.create(doc).then((response)=>{
+                res.status(200).json({status:true, message:'Your donation is successfull'})
+            })
+        }
+    } catch (error) {
+        res.status(500).json({status:false,message:'internal server error'})
+    }
+}
+
+export const getUserWallet = async (req:Request , res:Response) => {
+    try {
+        const userId = req.userId
+        const userWallet = await donationModel.findOne({userId:userId}).populate('donators.donorId')
+        if(!userWallet){
+            res.json({status:false,message:'user dont have wallet'})
+        }
+        res.status(200).json({status:true,data:userWallet,message:'success'})
     } catch (error) {
         res.status(500).json({status:false,message:'internal server error'})
     }

@@ -3,11 +3,14 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import {FcLikePlaceholder} from 'react-icons/fc'
 import {BiDollar} from 'react-icons/bi'
 import {MdMultipleStop} from 'react-icons/md'
+import PayPal from "../PayPal/Paypal";
 
 
-const Donate = () => {
-    const [count,setCount] = React.useState<number>()
-
+const Donate = ({data}:{data:string}) => {
+    const [count,setCount] = React.useState<number>(0)
+    const [note , setNote] = React.useState('')
+    const [donate,setDonate] = React.useState(false)
+    
     return (  
         <>
             <Box boxShadow={1} sx={{
@@ -39,32 +42,33 @@ const Donate = () => {
                         
                     </Box>
                     <Box sx={{display:'flex',marginLeft:'auto',width:'70px'}}>
-                        <MdMultipleStop/>
-                        <TextField
-                            id="outlined-number"
-                            type="number"
-                            onChange={(e)=>setCount(parseInt(e.target.value))}
-                            InputProps={{
-                                inputProps: { min: 1 }
-                            }}
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            onKeyPress={(event) => {
-                                if (event?.key === '-' || event?.key === '+') {
-                                  event.preventDefault();
-                                }
-                            }}
-                            sx={{marginLeft:'auto',
-                                "& .MuiInputLabel-root.Mui-focused": { color: "#4f4e4e" },
-                                "& .MuiOutlinedInput-root.Mui-focused": {
-                                "& > fieldset": { borderColor: "#f22c50" },
-                                },
-                                "& .MuiOutlinedInput-root": {
-                                "& fieldset": { borderRadius: 3 },
-                                },
-                            }}
-                        />
+                        {!donate && 
+                            <TextField
+                                id="outlined-number"
+                                type="number"
+                                onChange={(e)=>setCount(parseInt(e.target.value))}
+                                InputProps={{
+                                    inputProps: { min: 1 }
+                                }}
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                                onKeyPress={(event) => {
+                                    if (event?.key === '-' || event?.key === '+') {
+                                    event.preventDefault();
+                                    }
+                                }}
+                                sx={{marginLeft:'auto',
+                                    "& .MuiInputLabel-root.Mui-focused": { color: "#4f4e4e" },
+                                    "& .MuiOutlinedInput-root.Mui-focused": {
+                                    "& > fieldset": { borderColor: "#f22c50" },
+                                    },
+                                    "& .MuiOutlinedInput-root": {
+                                    "& fieldset": { borderRadius: 3 },
+                                    },
+                                }}
+                            />
+                        }
                     </Box>
                 </Box>
                 <Box mt={2}>
@@ -74,6 +78,8 @@ const Donate = () => {
                         name="note"
                         type="text"
                         id="note"
+                        value={note}
+                        onChange={(e)=>setNote(e.target.value)}
                         autoComplete="note"
                         placeholder="Say something nice :)"
                         multiline
@@ -89,24 +95,29 @@ const Donate = () => {
                         }}
                     />
                 </Box>
-                <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    sx={{
-                        mt: 2,
-                        mb: 2,
-                        borderRadius: "20px",
-                        height: "42px",
-                        backgroundColor: "#eb1e44",
-                        "&:hover": { backgroundColor: "#eb1e44" },
-                        textTransform: "none",
-                    }}
-                    >
-                    <BiDollar/>    
-                    {count ? count * 3:''} Donate
-                </Button>
-                     
+                <Box mt={2}>
+                    {donate ? (
+                        <PayPal donation={count} setDonate={setDonate} creatorId={data}/>
+                    ):(<Button
+                        onClick={()=>{
+                            {count != undefined && count > 0 ? setDonate(true): setDonate(false)}
+                        }}
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{
+                            mb: 2,
+                            borderRadius: "20px",
+                            height: "42px",
+                            backgroundColor: "#eb1e44",
+                            "&:hover": { backgroundColor: "#eb1e44" },
+                            textTransform: "none",
+                        }}
+                        >
+                        <BiDollar/>    
+                        {count ? count  * 3:null} Donate
+                    </Button>)}
+                </Box>     
             </Box>
         </>
     );

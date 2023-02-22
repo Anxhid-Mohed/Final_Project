@@ -6,7 +6,7 @@ import crypto from 'crypto'
 import { sendMail } from "./emailSend";
 
 
-export const nodemailer =async (id:string,email:string) => {
+export const nodemailer = async (id:string,email:string) => {
 
     const userToken = await new tokenModel({
     userId:id,

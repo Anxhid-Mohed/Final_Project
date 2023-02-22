@@ -231,7 +231,7 @@ const userPage = (datas:any) => {
                     <About data={datas?.datas}/>
                 </Grid>
                 <Grid xs={12} sm={12} md={6} m={1} sx={{ width:{ xs:'100%' , sm:'100%' , md:'50%' } }} >
-                    {datas?.datas._id === user?.userId ? <AddPosts data={datas?.datas.profile}/>:<Donate/>}
+                    {datas?.datas._id === user?.userId ? <AddPosts data={datas?.datas.profile}/>:<Donate data={datas?.datas._id}/>}
                 </Grid>
             </Grid>}
 
