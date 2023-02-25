@@ -20,7 +20,8 @@ import Donate from "@/components/user/PageComponents/Donate";
 
 export const getServerSideProps = async (context:any) => {
     try {
-        const username = context.params.username 
+        const username = context.params.username
+        console.log(username,'page')
         const response = await userPages(username)
        
         
@@ -60,7 +61,6 @@ const userPage = (datas:any) => {
                     if(response?.status === false || response?.isBanned === true){
                         router.push('/auth')
                     }else if (response?.isAuthenticated){
-                        console.log(response,'===------------------------------------------===========');
                         dispatch(userDetails(response))
                     }
                 }

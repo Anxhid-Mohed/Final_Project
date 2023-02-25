@@ -75,3 +75,24 @@ export const reportLists= async () => {
         console.log(error);
     }
 } 
+
+
+export const PostViews = async (postId:string) =>{
+    try {
+        const {data} = await adminApi.get(`/view?id=${postId}`)
+        return data
+    } catch (error) {
+        console.log(error);
+    }
+
+} 
+
+export const removeReportedPost = async (postId:string) =>{
+    try {
+        const {data} = await adminApi.delete(`/remove?id=${postId}`)
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+
+}

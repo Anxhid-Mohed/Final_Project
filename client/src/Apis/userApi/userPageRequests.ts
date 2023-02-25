@@ -149,3 +149,12 @@ export const searchCreaters = async (search:string) => {
         console.log(error);
     }
 }
+
+export const getUserData = async (userId:string) => {
+    try {
+        const {data} = await userApi.get(`/user-data?id=${userId}`)
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+}

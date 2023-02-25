@@ -4,8 +4,8 @@ import TableRow from '@mui/material/TableRow';
 import moment from 'moment';
 import CloseIcon from '@mui/icons-material/Close';
 import { Avatar, Button, IconButton, styled } from '@mui/material';
-import { useState } from "react";
 import { requestApproval, requestRejection } from '@/Apis/adminApi/AdminListing';
+import { useRouter } from 'next/router';
 import Swal from 'sweetalert2';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -29,7 +29,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const RequestRows = (request:any) => {
-
+    const router = useRouter()
     return (  
         <>
             <StyledTableRow key={ request.request._id}>
@@ -55,6 +55,7 @@ const RequestRows = (request:any) => {
                                 const response = await requestApproval(request.request._id)
                                 console.log(response)
                                 if (response.status === true) {
+                                    router.replace(router.asPath)
                                     Swal.fire({
                                         position: 'center',
                                         icon: 'success',
@@ -102,6 +103,7 @@ const RequestRows = (request:any) => {
                                 const response = await requestRejection(request.request._id)
                                 console.log(response)
                                 if (response.status === true) {
+                                    router.replace(router.asPath)
                                     Swal.fire({
                                         position: 'center',
                                         icon: 'success',

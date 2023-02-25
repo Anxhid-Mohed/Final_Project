@@ -6,6 +6,8 @@ dotenv.config();
 import connectDb from './config/dbconnection';
 import userRouter from './routes/user/userRouter'
 import adminRouter from './routes/admin/adminRouter';
+import chatRouter from './routes/user/chatRouter';
+import messageRouter from './routes/user/messageRouter';
 const cookieParser = require('cookie-parser');
 
 //variables
@@ -35,6 +37,8 @@ app.use(cookieParser());
 
 app.use('/',userRouter)
 app.use('/admin',adminRouter)
+app.use('/chat',chatRouter)
+app.use('/messages',messageRouter)
 
 
 

@@ -5,7 +5,8 @@ import adminModel from '../model/adminSchema';
 import userModel from '../model/userSchema';
 import requestsModel from '../model/requestSchema';
 import reportsModel from '../model/reportsSchema';
-
+import postsModel from '../model/postsSchema';
+import commentsModel from '../model/commentsSchema';
 
 //---> Admin Sign in <---// 
 export const adminSignin = async (req:Request,res:Response) => {
@@ -136,6 +137,36 @@ export const reportsList = async (req: Request, res: Response) => {
         console.log(reports)
         if(!reports)return res.json({status:false,message:'No reports found'})
         res.status(200).json({status:true,data:reports,message:'success'})
+    } catch (error) {
+        res.status(500).json({message:'Internal Server Error'})
+    }
+}
+
+export const postView = async (req: Request, res: Response) => {
+    try {
+        const postId = req.query.id
+        if(!postId)return res.json({status:false ,message:'No post found'})
+        const post = await postsModel.findById({_id:postId}).populate('userId')
+        if(post){
+            res.status(200).json({status:true,data:post,message:'success'})
+        }else{
+            await reportsModel.findByIdAndDelete({postId:postId})
+            res.json({status:false,message:'post not found'})
+        } 
+    } catch (error) {
+        res.status(500).json({message:'Internal Server Error'})
+    }
+}
+
+export const removeReportedPost = async (req: Request, res: Response) => {
+    try {
+        const postId = req.query.id
+        console.log(postId)
+        if(!postId)return res.json({status:false ,message:'failed to remove post'})
+        await postsModel.findByIdAndDelete({_id:postId}) 
+        await reportsModel.findOneAndDelete({postId:postId})
+        await commentsModel.findOneAndDelete({postId})
+        res.status(200).json({status:true,message:'removed successfully'})
     } catch (error) {
         res.status(500).json({message:'Internal Server Error'})
     }

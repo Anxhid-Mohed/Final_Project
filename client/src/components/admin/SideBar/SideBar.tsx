@@ -50,19 +50,21 @@ const AdminSideBar = () => {
                     </Box>
                 </Link>
                 <Link legacyBehavior href='/admin/requests'>
-                <Box mt={1} sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,":hover":{backgroundColor:'#e8e8e8'}}}>
-                    <Box sx={{ml:2,display:'flex',color:'#333232'}}>
-                        <LockPersonOutlinedIcon/>
-                        <h4 style={{marginTop:'auto',marginLeft:'6px'}}>Requests</h4>
+                    <Box mt={1} sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,":hover":{backgroundColor:'#e8e8e8'}}}>
+                        <Box sx={{ml:2,display:'flex',color:'#333232'}}>
+                            <LockPersonOutlinedIcon/>
+                            <h4 style={{marginTop:'auto',marginLeft:'6px'}}>Requests</h4>
+                        </Box>
                     </Box>
-                </Box>
                 </Link>
-                <Box mt={1} sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,":hover":{backgroundColor:'#e8e8e8'}}}>
-                    <Box sx={{ml:2,display:'flex',color:'#333232'}}>
-                        <GppMaybeOutlinedIcon/>
-                        <h4 style={{marginTop:'auto',marginLeft:'6px'}}>Report</h4>
+                <Link legacyBehavior href='/admin/reports'>
+                    <Box mt={1} sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,":hover":{backgroundColor:'#e8e8e8'}}}>
+                        <Box sx={{ml:2,display:'flex',color:'#333232'}}>
+                            <GppMaybeOutlinedIcon/>
+                            <h4 style={{marginTop:'auto',marginLeft:'6px'}}>Report</h4>
+                        </Box>
                     </Box>
-                </Box>
+                </Link>
                 <a onClick={handleClick}>
                 <Box mt={1} sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,":hover":{backgroundColor:'#e8e8e8'}}}>
                     <Box sx={{ml:2,display:'flex',color:'#333232'}}>

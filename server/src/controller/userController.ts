@@ -7,7 +7,7 @@ import verificationModel from '../model/verificationToken';
 import postsModel from '../model/postsSchema';
 import requestModel from '../model/requestSchema';
 import commentsModel from '../model/commentsSchema';
-import IntegrationsModel from '../model/IntegrationsSchema';
+import IntegrationsModel from '../model/BankSchema';
 import donationModel from '../model/donationSchema';
 import reportsModel from '../model/reportsSchema';
 
@@ -226,7 +226,6 @@ export const userPage = async (req:Request,res:Response) => {
         const username = req.query.username;
         console.log(username);
         const user = await userModel.findOne({username:username})
-        console.log('--------------------------------',user);
         if(user){
             res.status(200).json({status:true,data:user,message:'success'})
         }else{
@@ -713,6 +712,19 @@ export const getUserWallet = async (req:Request , res:Response) => {
             res.json({status:false,message:'user dont have wallet'})
         }
         res.status(200).json({status:true,data:userWallet,message:'success'})
+    } catch (error) {
+        res.status(500).json({status:false,message:'internal server error'})
+    }
+}
+
+export const getUserDatas = async (req: Request, res: Response) => {
+    try {
+        console.log('0000000000000000000000')
+        const userId = req.query.id
+        console.log(userId)
+        const user = await userModel.findById(userId)
+        console.log(user,"?>>>>>>")
+        res.status(200).json({status:true, data:user,message:'okkkkkk'})
     } catch (error) {
         res.status(500).json({status:false,message:'internal server error'})
     }

@@ -8,6 +8,9 @@ import { FcApproval } from "react-icons/fc";
 import { tokenVerification } from "@/Apis/userApi/userAuthRequest";
 import router from "next/router";
 import { getAllCreaters, searchCreaters } from "@/Apis/userApi/userPageRequests";
+import Navbar from "@/components/user/NavBar/NavBar";
+import { userDetails } from "@/redux/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -55,28 +58,32 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const Explore = () => {
 
+    const {user} = useSelector((state:any)=>state.userInfo)
+    const dispatch = useDispatch()
     const [search ,setSearch] = React.useState()
     const [creaters, setCreaters] = React.useState([])
-    // useEffect(()=>{
-    //     let token = localStorage.getItem('userToken')
-    //     if(token){
-    //        (
-    //             async () => {
-    //                 const response = await tokenVerification(token);
-    //                 console.log(response);
-                    
-    //                 if(response.status == false || response.isBanned === true){
-    //                     router.push('/auth')
-    //                 }else if (response.isAuthenticated){
-    //                     // router.push('/dashboard')
-    //                     console.log(response);
-    //                 }
-    //             }
-    //         )()
-    //     }else{
-    //       router.push('/auth')
-    //     }
-    // },[])
+
+
+    useEffect(()=>{
+        let token = localStorage.getItem('userToken')
+        if(token){
+           (
+                async () => {
+                    const response = await tokenVerification(token);
+                    console.log(response);
+                    if(response.status == false || response.isBanned === true){
+                        router.push('/auth')
+                    }else if (response.isAuthenticated && response.isBanned === false){
+                        dispatch(userDetails(response))
+                    }else{
+                        router.push('/auth')
+                    }
+                }
+            )()
+        }else{
+          router.push('/auth')
+        }
+    },[])
 
     useEffect(()=>{
         (
@@ -94,9 +101,10 @@ const Explore = () => {
     return (  
         <>
           <Container>
+            <Navbar/>
             <Grid item container sx={{display:'flex',mt:11}}>
                <Grid item md={2.5} sx={{display: { xs: 'none', sm: 'none', md: 'block'}}} >
-                   <SideBar/>
+                   <SideBar userData={user?.username}/>
                </Grid>
                <Grid item xs={12} sm={12} md={9.5} sx={{lineBreak:'auto'}}>
                     <Container maxWidth='lg'>
