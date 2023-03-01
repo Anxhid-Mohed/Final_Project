@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import Header from '../NavBar/Header';
 import { signup } from '@/Apis/userApi/userAuthRequest';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -113,6 +114,7 @@ export default function SignUp() {
   return (
     <ThemeProvider theme={theme}>
       <ToastContainer/>
+      <Header/>
       <Container component="main" maxWidth="xs">
         
         <CssBaseline />

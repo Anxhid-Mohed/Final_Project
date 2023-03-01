@@ -13,6 +13,7 @@ import { tokenVerification } from "@/Apis/userApi/userAuthRequest";
 import { useRouter } from "next/router";
 import { userDetails } from "@/redux/userSlice";
 import moment from "moment";
+import { getPayouts } from "@/Apis/userApi/userPageRequests";
 
 
 const Wallet = () => {
@@ -22,6 +23,7 @@ const Wallet = () => {
 
     const router = useRouter()
     const [data,setData] = React.useState<{userId: string; amount: number; donators:any}>()
+    const [payouts, setPayouts] = React.useState([])
 
     useEffect(()=>{
         let token = localStorage.getItem('userToken')
@@ -51,12 +53,25 @@ const Wallet = () => {
             async()=>{
                 const response = await userWallet()
                 if(response?.status === true){
-                    console.log(response.data)
                     setData(response.data);
                 }
             }
         )()
     },[])
+
+    useEffect(()=>{
+        (
+            async()=>{
+                if(user){
+                    const response = await getPayouts(user?.userId)
+                    if(response?.status === true){
+                        console.log(response.data)
+                        setPayouts(response.data)
+                    }
+                }
+            }
+        )()
+    },[user])
 
     const style = {fontSize:'41px'}
     return (  
@@ -91,31 +106,41 @@ const Wallet = () => {
                                     </Typography>
                                 </Grid>
                             </Grid>
-                            <Grid item mt={3} mb={2} xs={12}  p={3.5} sx={{
+                            {payouts.length > 0 ? 
+                            (<>
+                                <h3 style={{marginTop:'14px',fontWeight:'800'}}>Payouts</h3>
+                                <Grid item mt={3} mb={2} xs={12}  p={3.5} sx={{borderRadius:'15px',border:'1px solid #dedede',lineBreak:'auto'}}>
+                                    <Box className={styles.scrollBar} mt={2} sx={{overflowY:'scroll',overflowX:'hidden'}}>
+                                        <Box sx={{ pb: 3,height: "450px" }}>
+                                        <CssBaseline />  
+                                        {
+                                            payouts?.map((payout:any) =>{
+                                                return(
+                                                    <List key={payout._id} sx={{borderBottom:'1px solid #d6d6d6'}} >
+                                                        <ListItem button >
+                                                            <ListItemText sx={{lineBreak:'auto'}} secondary={`Your $${payout.amount} payout is successfull`} />
+                                                            <ListItemText sx={{lineBreak:'auto'}} secondary={moment(payout.createdAt).format("DD/MM/YYYY")}/>
+                                                            <ListItemText sx={{lineBreak:'auto'}} primary={'Completed'}/>
+                                                            <FcOk style={{fontSize:'25px'}}/>
+                                                        </ListItem>       
+                                                    </List>     
+                                                )
+                                            })
+                                        }
+                                        </Box>
+                                    </Box>
+                                </Grid>
+                            </> ):
+                            (<Grid item mt={3} mb={2} xs={12}  p={3.5} sx={{
                                 borderRadius:'15px',
                                 border:'1px solid #dedede',
                                 lineBreak:'auto',
                                 textAlign:'center',
-                            }}
-                            >
+                            }}>
                                 <BsEmojiFrown style={{fontSize:'30px'}}/>
                                 <Typography sx={{fontWeight:600,color:'#333232'}}>Nothing here just yet! ☕</Typography>
                                 <Typography mt={1} sx={{color:'#333232'}}>Share your page with your audience to get started.</Typography>
-                            </Grid>
-                            <Grid item mt={3} mb={2} xs={12}  p={3.5} sx={{borderRadius:'15px',border:'1px solid #dedede',lineBreak:'auto'}}>
-                                <Box className={styles.scrollBar} mt={2} sx={{overflowY:'scroll',overflowX:'hidden'}}>
-                                    <Box sx={{ pb: 3,height: "450px" }}>
-                                    <CssBaseline />  
-                                    <List sx={{borderBottom:'1px solid #d6d6d6'}} >
-                                        <ListItem button >
-                                            <ListItemText sx={{lineBreak:'auto'}} secondary={'Your 10$ payout is successfull'} />
-                                            <ListItemText sx={{lineBreak:'auto'}} secondary={moment(Date.now()).format("DD/MM/YYYY")} />
-                                            <FcOk style={{fontSize:'25px'}}/>
-                                        </ListItem>       
-                                    </List> 
-                                    </Box>
-                                </Box>
-                            </Grid>
+                            </Grid>)}
                         </Container>
                     </Grid>
                 </Grid>

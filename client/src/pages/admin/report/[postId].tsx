@@ -6,8 +6,10 @@ import ShareIcon from '@mui/icons-material/Share';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import React from "react";
 import SideBar from "@/components/admin/SideBar/SideBar";
+import NavBar from "@/components/admin/NavBar/NavBar";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import moment from "moment";
 
 
 
@@ -33,6 +35,7 @@ const PostView = ({data}:any) => {
     const styles = {marginRight:'6px'}
     return (  
         <>
+            <NavBar/>
             <Container>
                 <Grid item container sx={{display:'flex',mt:11}}>
                     <Grid item md={2.5} sx={{display: { xs: 'none', sm: 'none', md: 'block'} }}>
@@ -60,8 +63,8 @@ const PostView = ({data}:any) => {
                                                 </IconButton>
                                             </>
                                             }
-                                            title={'hellooo'}
-                                            subheader={'okdeda'}
+                                            title={data ? data.userId.name :''}
+                                            subheader={moment(data.createdAt).format("DD/MM/YYYY")}
                                         />
                                     
                                             {
@@ -70,12 +73,12 @@ const PostView = ({data}:any) => {
                                                     <Box p={3}>
                                                         <CardMedia sx={{ height: '-webkit-fill-available', borderRadius: '8px' }}
                                                             component="img"
-                                                            image={'dknfkjdnfks'}
+                                                            image={data.post}
                                                             alt='' />
                                                     </Box>
                                                     <CardContent>
                                                         <Typography sx={{ ml: 1 }} variant="body2" color="text.secondary">
-                                                            
+                                                            {data.caption}
                                                         </Typography>
                                                     </CardContent>
                                                 </>

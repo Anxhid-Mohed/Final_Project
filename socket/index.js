@@ -20,16 +20,28 @@ io.on('connection', (socket)=>{
 
     //Send Message
     socket.on('send-message',(data)=>{
-        console.log(data)
+        // console.log(data)
         if(data?.receiverId){
-        const { receiverId } = data;
-        const user = activeUsers.find((user)=>user?.userId === receiverId);
-        // console.log("data",data)
-        if(user){
-            io.to(user.socketId).emit('recieve-message',data)
-        }
+            const { receiverId } = data;
+            const user = activeUsers.find((user)=>user?.userId === receiverId);
+            // console.log("data",data)
+            if(user){
+                io.to(user.socketId).emit('recieve-message',data)
+            }
         }
        
+    })
+
+    //Notification
+    socket.on("user-notification",(data)=>{
+        console.log(data)
+        const {id} = data
+        if(id){
+            const user = activeUsers.find((user)=>user?.userId === id);
+            if(user){
+                io.to(user.socketId).emit('recieve-notification',data);
+            }
+        }
     })
 
     socket.on('disconnect', ()=>{

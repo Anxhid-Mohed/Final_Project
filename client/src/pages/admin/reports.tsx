@@ -11,6 +11,7 @@ import SideBar from '@/components/admin/SideBar/SideBar';
 import { Container, Grid, styled } from '@mui/material';
 import { reportLists } from '@/Apis/adminApi/AdminListing';
 import ReportRow from '@/components/admin/RowComponent/reportRow';
+import NavBar from "@/components/admin/NavBar/NavBar";
 import { ToastContainer,toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -89,48 +90,51 @@ export default function Requests({reports}:any) {
       setPage(0);
     };
 
-    return (  
-      <Container>
-        <Grid container item sx={{display:'flex',pt:11}}>
-                <Grid item md={2.5} sx={{display: { xs: 'none', sm: 'none', md: 'block'} }}>
-                    <SideBar/>
+    return (
+        <>
+        <NavBar/>
+        <Container>
+            <Grid container item sx={{display:'flex',pt:11}}>
+                    <Grid item md={2.5} sx={{display: { xs: 'none', sm: 'none', md: 'block'} }}>
+                        <SideBar/>
+                    </Grid>
+                <Grid item xs={12} sm={12} md={9.5} sx={{lineBreak:'auto'}}>   
+                    <Paper sx={{ width: '100%',marginLeft:{md:'25px'}}}>
+                        <TableContainer sx={{ maxHeight: 560 }}>
+                            <Table stickyHeader aria-label="sticky table">
+                                <TableHead style={{borderRadius:'10px'}}>
+                                    <TableRow>
+                                        <StyledTableCell sx={{ borderTopLeftRadius: '12px' , borderBottomLeftRadius: '12px'}}>reporter</StyledTableCell>
+                                        <StyledTableCell align="left">reasons</StyledTableCell>
+                                        <StyledTableCell align="left">Posts</StyledTableCell>
+                                        <StyledTableCell sx={{ borderBottomRightRadius: '12px' , borderTopRightRadius: '12px'}} align="center">Actions</StyledTableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                {reports
+                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                    .map((report:any) => {
+                                        return (
+                                            <ReportRow key={report._id} report={report}/>
+                                        )
+                                    }) 
+                                }  
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        <TablePagination
+                            rowsPerPageOptions={[10, 25, 100]}
+                            component="div"
+                            count={reports.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+                    </Paper>
                 </Grid>
-            <Grid item xs={12} sm={12} md={9.5} sx={{lineBreak:'auto'}}>   
-                <Paper sx={{ width: '100%',marginLeft:{md:'25px'}}}>
-                    <TableContainer sx={{ maxHeight: 560 }}>
-                        <Table stickyHeader aria-label="sticky table">
-                            <TableHead style={{borderRadius:'10px'}}>
-                                <TableRow>
-                                    <StyledTableCell sx={{ borderTopLeftRadius: '12px' , borderBottomLeftRadius: '12px'}}>reporter</StyledTableCell>
-                                    <StyledTableCell align="left">reasons</StyledTableCell>
-                                    <StyledTableCell align="left">Posts</StyledTableCell>
-                                    <StyledTableCell sx={{ borderBottomRightRadius: '12px' , borderTopRightRadius: '12px'}} align="center">Actions</StyledTableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                            {reports
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((report:any) => {
-                                    return (
-                                     <ReportRow key={report._id} report={report}/>
-                                    )
-                                }) 
-                            }  
-                            </TableBody>
-                      </Table>
-                  </TableContainer>
-                  <TablePagination
-                      rowsPerPageOptions={[10, 25, 100]}
-                      component="div"
-                      count={reports.length}
-                      rowsPerPage={rowsPerPage}
-                      page={page}
-                      onPageChange={handleChangePage}
-                      onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                </Paper>
             </Grid>
-        </Grid>
-     </Container>
+        </Container>
+        </>
     );
 }

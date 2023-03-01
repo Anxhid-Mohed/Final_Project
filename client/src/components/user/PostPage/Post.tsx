@@ -179,7 +179,6 @@ export default function RecipeReviewCard({username,profile}:any) {
                         width:'100%'
                     }}><a style={{marginTop:'10px' , fontSize:'13px'}}>Write a Quick Update</a></Typography>
                     <br />
-                    
                 </Box>
                 <hr style={{width: '90%',margin:'auto'}} />
                 <Typography mt={1} sx={{textAlign:'center'}}>or</Typography>

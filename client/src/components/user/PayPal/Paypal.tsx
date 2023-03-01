@@ -3,7 +3,7 @@ import { PayPalButtons } from "@paypal/react-paypal-js";
 import Router, { useRouter } from "next/router";
 import { ApprovedDonation } from "@/Apis/userApi/userRequests";
 import Swal from "sweetalert2";
-const PayPal = ({donation,setDonate,creatorId}:{donation:number,setDonate:any,creatorId:any}) => {
+const PayPal = ({note,setNote,donation,setDonate,creatorId}:{note:string,setNote:any,donation:number,setDonate:any,creatorId:any}) => {
     console.log(creatorId,'-----------------')
 
     
@@ -21,6 +21,7 @@ const PayPal = ({donation,setDonate,creatorId}:{donation:number,setDonate:any,cr
                 showConfirmButton: false,
                 timer: 1500
             })
+            setNote('')
             setDonate(false)
         }else{
             Swal.fire({
@@ -47,7 +48,7 @@ const PayPal = ({donation,setDonate,creatorId}:{donation:number,setDonate:any,cr
                 return actions.order.create({
                     purchase_units:[
                         {
-                            description:'hello',
+                            description:note,
                             amount:{
                                 value: donation * 3 
                             }

@@ -14,9 +14,8 @@ import { useRouter } from "next/router";
 import { userDetails } from "@/redux/userSlice";
 import { useDispatch ,useSelector} from "react-redux";
 import Donate from "@/components/user/PageComponents/Donate";
-
-
-
+import { notification } from "@/Apis/userApi/userRequests";
+import { userNotification } from "@/redux/notificationSlice";
 
 export const getServerSideProps = async (context:any) => {
     try {
@@ -93,7 +92,11 @@ const userPage = (datas:any) => {
                         await uploadString(coverRef,imgBase,'data_url').then(async()=>{
                             const downloadURL = await getDownloadURL(coverRef)
                             const response = await uploadCoverImage(downloadURL,token as string)
-                            if(response.status === true)setCoverImg([])
+                            if(response.status === true){
+
+                                setCoverImg([])
+                            }
+                            
                         })
                     } 
                 )()
@@ -103,9 +106,16 @@ const userPage = (datas:any) => {
 
     const handleFollow = async (createrId:string) => {
         let token = localStorage.getItem('userToken') as string
+        let obj = {
+            senderId:user?.userId,
+            receiverId:datas?.datas?._id,
+            content:`${user?.username} followed you `,
+        }
         const response = await userFollow(createrId,token)
         if(response.action === 'followed'){
             setIsFollowed(true)
+            const response = await notification(obj)
+            dispatch(userNotification({"id":datas?.datas?._id,"message":`Hey ! ${user?.username} followed you `}))
         }else{
             setIsFollowed(false)
         }
@@ -231,7 +241,8 @@ const userPage = (datas:any) => {
                     <About data={datas?.datas}/>
                 </Grid>
                 <Grid xs={12} sm={12} md={6} m={1} sx={{ width:{ xs:'100%' , sm:'100%' , md:'50%' } }} >
-                    {datas?.datas._id === user?.userId ? <AddPosts data={datas?.datas.profile}/>:<Donate data={datas?.datas._id}/>}
+                    {datas?.datas._id === user?.userId && user?.creator === true ? <AddPosts data={datas?.datas.profile}/>:''}
+                    {datas?.datas._id != user?.userId && datas?.datas.creator === true && <Donate data={datas?.datas._id}/>}
                 </Grid>
             </Grid>}
 

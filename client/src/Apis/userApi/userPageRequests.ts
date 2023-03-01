@@ -158,3 +158,13 @@ export const getUserData = async (userId:string) => {
         console.log(error);
     }
 }
+
+export const getPayouts = async (userId:string) => {
+    try {
+        console.log(userId,'-----')
+        const {data} = await userApi.get(`/payouts?id=${userId}`);
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+}

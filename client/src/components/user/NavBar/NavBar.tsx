@@ -15,7 +15,23 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useSelector } from 'react-redux'
+import { useSelector } from 'react-redux';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+export const notification = (msg:string)=>{
+    toast(`⚡${msg}`, {
+        position: "top-center",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+    });
+    return;
+}
 
 const Navbar = () => {
 
@@ -30,12 +46,14 @@ const Navbar = () => {
     return (  
         <>
         <Box>
+            <ToastContainer/>
             <AppBar sx={{background:'#fff'}} elevation={0} >
                 <Container maxWidth={'xl'}>
                     <Toolbar sx={{height:'70px'}}>
+                    <Avatar src="https://res.cloudinary.com/dbb0ncoht/image/upload/v1677577766/img_ivfg7q.svg"/>
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 ,ml:1,color:'black'}}>
-                                MakeADay
-                            </Typography>
+                            MakeADay
+                        </Typography>
                             <Box sx={{borderRadius:'20px', border:'1.5px solid #dedede' , display:'flex',alignItems:'center',pl:1}}>
                                 <Avatar
                                     alt="Remy Sharp"

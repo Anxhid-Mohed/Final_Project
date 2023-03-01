@@ -8,6 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import SideBar from '@/components/admin/SideBar/SideBar';
+import NavBar from "@/components/admin/NavBar/NavBar";
 import moment from 'moment';
 import { Container, Grid, styled } from '@mui/material';
 import { userBlocked, usersList } from '@/Apis/adminApi/AdminListing';
@@ -60,7 +61,9 @@ export default function UsersTable(users:any) {
   };
 
   return (
-    <Container>
+    <>
+      <NavBar/>
+      <Container>
         <Grid container sx={{display:'flex',pt:11}}>
             <Grid md={2.5} sx={{display: { xs: 'none', sm: 'none', md: 'block'} }}>
                 <SideBar/>
@@ -101,5 +104,6 @@ export default function UsersTable(users:any) {
           </Grid>
         </Grid>
     </Container>
+    </>
   );
 }

@@ -28,3 +28,12 @@ export const userWallet = async () => {
         console.log(error)
     }
 }
+
+export const notification = async (formData:any) => {
+    try {
+        const {data} = await userApi.post('/notification',formData);
+        return data;
+    } catch (error) {
+        console.log(error)
+    }
+}

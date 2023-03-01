@@ -97,7 +97,7 @@ const Donate = ({data}:{data:string}) => {
                 </Box>
                 <Box mt={2}>
                     {donate ? (
-                        <PayPal donation={count} setDonate={setDonate} creatorId={data}/>
+                        <PayPal note={note} setNote={setNote} donation={count} setDonate={setDonate} creatorId={data}/>
                     ):(<Button
                         onClick={()=>{
                             {count != undefined && count > 0 ? setDonate(true): setDonate(false)}

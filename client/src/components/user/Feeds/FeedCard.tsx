@@ -13,7 +13,9 @@ import {AiOutlineEdit,AiOutlineInfoCircle} from 'react-icons/ai'
 import {MdDeleteOutline, MdFavoriteBorder} from 'react-icons/md'
 import { commentPost, commentsLikes, deleteComments, editPost, getPostComments, likePost, removePost, reportPost } from "@/Apis/userApi/userPageRequests";
 import { setSuccessMsg, setErrMsg } from "@/pages/integration";
-import { useSelector } from "react-redux";
+import { useSelector ,useDispatch } from "react-redux";
+import { notification } from "@/Apis/userApi/userRequests";
+import { userNotification } from "@/redux/notificationSlice";
 
 
 const style = {
@@ -63,6 +65,7 @@ const names = [
 const FeedCard = ({data,setUpload,upload}:any) => {
 
     const {user} = useSelector((state:any)=>state.userInfo)
+    const dispatch = useDispatch()
     const [editOpen, setEditOpen] = React.useState(false)
     const [ comment, setComment] = React.useState('')
     const [commentsData, setCommentsData] = React.useState([])
@@ -127,10 +130,18 @@ const FeedCard = ({data,setUpload,upload}:any) => {
         try {
             let token = localStorage.getItem('userToken') as string
             const postId = data._id;
+            let obj = {
+                senderId:user?.userId,
+                receiverId:data?.userId._id,
+                content:`${user?.username} liked your post`,
+            }
             const response = await likePost(postId,token)
             if(response.action == 'liked'){
                 setIsLiked(true)
                 setUpload(!upload)
+                const response = await notification(obj)
+                dispatch(userNotification({"id":data?.userId._id,"message":`${user?.username} liked your post`}))
+
             }else{
                 setIsLiked(false)
                 setUpload(!upload)
@@ -146,9 +157,16 @@ const FeedCard = ({data,setUpload,upload}:any) => {
             if(comment != null){
                 let token = localStorage.getItem('userToken') as string
                 const postId = data._id;
+                let obj = {
+                    senderId:user?.userId,
+                    receiverId:data?.userId._id,
+                    content:`${user?.username} commented your post`,
+                }
                 const response = await commentPost(comment,postId,token)
                 if(response.status === true){
                     setUpdate(!update)
+                    const response = await notification(obj)
+                    dispatch(userNotification({"id":data?.userId._id,"message":`Hey ! ${user?.username} commented your post`}))
                 }else{
                     setErrMsg(response.message)
                 }

@@ -26,6 +26,6 @@ const donationSchema:Schema = new Schema({
             type: Date
         }
     }]
-})
+},{timestamps:true})
 
 export default model('donations',donationSchema);

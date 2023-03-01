@@ -10,6 +10,8 @@ import commentsModel from '../model/commentsSchema';
 import IntegrationsModel from '../model/BankSchema';
 import donationModel from '../model/donationSchema';
 import reportsModel from '../model/reportsSchema';
+import payoutsModel from '../model/payoutsSchema';
+import cron from 'node-cron'
 
 //---> Authentication-validation <---//
 export const verifyAuth = async(req:Request,res:Response) => {
@@ -725,6 +727,46 @@ export const getUserDatas = async (req: Request, res: Response) => {
         const user = await userModel.findById(userId)
         console.log(user,"?>>>>>>")
         res.status(200).json({status:true, data:user,message:'okkkkkk'})
+    } catch (error) {
+        res.status(500).json({status:false,message:'internal server error'})
+    }
+}
+
+
+//---> PayOuts <---//
+cron.schedule('0 0 * * *', async() => {
+    console.log('running a task every minute');
+    const donations = await donationModel.find();
+    donations.forEach(async (element, index, array) => {
+        const lastPayment = element.updatedAt
+        const currentDate = new Date()
+        const diffTime = Math.abs(Number(currentDate) - Number(lastPayment));
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+        if(diffDays === 7 && element?.amount !== 0){
+            console.log(element.userId)
+            const amount = element.amount
+            let doc = new payoutsModel({
+                userId: element.userId,
+                amount: element.amount
+            })
+            await doc.save()
+            const id=element.userId.toString()
+            console.log(id);
+            
+            await donationModel.findOneAndUpdate({userId:id},{
+                amount:0
+            })
+        }
+    });
+});
+
+
+export const getPayouts = async (req:Request , res:Response) =>{
+    try {
+        const userId  = req.query.id;
+        const payouts = await payoutsModel.find({userId: userId});
+        payouts ? res.status(200).json({status:true,data:payouts,message:'success'}) 
+        : res.json({status:false,message: 'User not found'});
     } catch (error) {
         res.status(500).json({status:false,message:'internal server error'})
     }

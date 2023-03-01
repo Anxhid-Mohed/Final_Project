@@ -13,6 +13,8 @@ import moment from 'moment';
 import { Avatar, Box, Button, Container, Grid, styled } from '@mui/material';
 import { userRequests } from '@/Apis/adminApi/AdminListing';
 import RequestRows from '@/components/admin/RowComponent/RequestRow';
+import NavBar from "@/components/admin/NavBar/NavBar";
+
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -60,48 +62,51 @@ export default function Requests(requests:any) {
       setPage(0);
     };
 
-    return (  
-      <Container>
-        <Grid container item sx={{display:'flex',pt:11}}>
-                <Grid item md={2.5} sx={{display: { xs: 'none', sm: 'none', md: 'block'} }}>
-                    <SideBar/>
+    return ( 
+        <>
+        <NavBar/> 
+        <Container>
+            <Grid container item sx={{display:'flex',pt:11}}>
+                    <Grid item md={2.5} sx={{display: { xs: 'none', sm: 'none', md: 'block'} }}>
+                        <SideBar/>
+                    </Grid>
+                <Grid item xs={12} sm={12} md={9.5} sx={{lineBreak:'auto'}}>   
+                    <Paper sx={{ width: '100%',marginLeft:{md:'25px'}}}>
+                        <TableContainer sx={{ maxHeight: 560 }}>
+                            <Table stickyHeader aria-label="sticky table">
+                                <TableHead style={{borderRadius:'10px'}}>
+                                    <TableRow>
+                                        <StyledTableCell sx={{ borderTopLeftRadius: '12px' , borderBottomLeftRadius: '12px'}}>User Name</StyledTableCell>
+                                        <StyledTableCell align="left">Categories</StyledTableCell>
+                                        <StyledTableCell align="left">Request Date</StyledTableCell>
+                                        <StyledTableCell sx={{ borderBottomRightRadius: '12px' , borderTopRightRadius: '12px'}} align="center">Actions</StyledTableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                {requests.requests
+                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                    .map((request:any) => {
+                                        return (
+                                        <RequestRows key={request._id} request={request}/>
+                                        )
+                                    }) 
+                                }  
+                                </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <TablePagination
+                        rowsPerPageOptions={[10, 25, 100]}
+                        component="div"
+                        count={requests.requests.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
+                    </Paper>
                 </Grid>
-            <Grid item xs={12} sm={12} md={9.5} sx={{lineBreak:'auto'}}>   
-                <Paper sx={{ width: '100%',marginLeft:{md:'25px'}}}>
-                    <TableContainer sx={{ maxHeight: 560 }}>
-                        <Table stickyHeader aria-label="sticky table">
-                            <TableHead style={{borderRadius:'10px'}}>
-                                <TableRow>
-                                    <StyledTableCell sx={{ borderTopLeftRadius: '12px' , borderBottomLeftRadius: '12px'}}>User Name</StyledTableCell>
-                                    <StyledTableCell align="left">Categories</StyledTableCell>
-                                    <StyledTableCell align="left">Request Date</StyledTableCell>
-                                    <StyledTableCell sx={{ borderBottomRightRadius: '12px' , borderTopRightRadius: '12px'}} align="center">Actions</StyledTableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                            {requests.requests
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((request:any) => {
-                                    return (
-                                     <RequestRows key={request._id} request={request}/>
-                                    )
-                                }) 
-                            }  
-                            </TableBody>
-                      </Table>
-                  </TableContainer>
-                  <TablePagination
-                      rowsPerPageOptions={[10, 25, 100]}
-                      component="div"
-                      count={requests.requests.length}
-                      rowsPerPage={rowsPerPage}
-                      page={page}
-                      onPageChange={handleChangePage}
-                      onRowsPerPageChange={handleChangeRowsPerPage}
-                  />
-                </Paper>
             </Grid>
-        </Grid>
-     </Container>
+        </Container>
+     </>
     );
 }

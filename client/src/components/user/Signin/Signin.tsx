@@ -6,6 +6,7 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import Header from '../NavBar/Header';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useEffect} from 'react';
 import { useRouter } from 'next/router';
@@ -128,6 +129,7 @@ export default function SignIn() {
 
   return (
     <ThemeProvider theme={theme}>
+      <Header/>
       <ToastContainer/>
       <Container component="main" maxWidth="xs">
         

@@ -33,7 +33,9 @@ import {
   reportPost,
   resendEmail,
   getUserDatas,
+  getPayouts,
 } from "../../controller/userController";
+import { userNotification } from "../../controller/notificationController";
 import { verifyToken } from "../..//middleware/verifyToken";
 const router: Router = express.Router();
 
@@ -72,6 +74,8 @@ router.patch("/edit-bankInfo", verifyToken, editUserBankInfo);
 router.post('/donate',verifyToken,ApproveDonation)
 router.get('/wallet',verifyToken,getUserWallet)
 router.get("/search", searchCreaters);
+router.get('/payouts',getPayouts)
+router.post('/notification',userNotification)
 router.get('/user-data',getUserDatas)
 
 export default router;
