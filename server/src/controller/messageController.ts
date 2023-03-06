@@ -1,4 +1,5 @@
 import { Request,Response } from "express";
+import chatModel from "../model/chatSchema";
 import messageModel from "../model/messageSchema";
 
 export const addMessage = async (req: Request, res: Response) =>{
@@ -10,6 +11,9 @@ export const addMessage = async (req: Request, res: Response) =>{
             text
         })
         const data =  await message.save();
+        await chatModel.findOneAndUpdate({_id:chatId},{
+            update:Math.random()
+        })
         res.status(200).json({status:true, data:data,message:'success'})
     } catch (error) {
         res.status(500).json({message:'Internal Server Error'})

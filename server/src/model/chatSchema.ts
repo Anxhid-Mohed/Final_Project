@@ -4,6 +4,11 @@ const chatSchema :Schema = new Schema({
     members :{
         type:Array,
     },
+
+    update:{
+        type:Number,
+        default:null
+    }
     
 },{timestamps:true})
 

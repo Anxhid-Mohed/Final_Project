@@ -5,7 +5,7 @@ const connectDb = async (DATABASE_URL:string) => {
     
     mongoose.set("strictQuery", false);
         try{
-            const DB_OPTIONS ={dbName:'Main_Project'}
+            const DB_OPTIONS ={dbName:'makeaday'}
             await mongoose.connect(DATABASE_URL,DB_OPTIONS )
             console.log('connected successfully..');
         }catch(error){

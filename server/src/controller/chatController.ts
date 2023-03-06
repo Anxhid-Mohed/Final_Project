@@ -20,7 +20,7 @@ export const userChats = async (req: Request, res: Response) => {
     try {
         const chats = await chatModel.find({
             members:{$in:[req.params.userId]}
-        })
+        }).sort({updatedAt:-1})
         res.status(200).json({status:true, data:chats,message:'success'})
     } catch (error) {
         res.status(500).json({status:false,message:'internal server error'})
