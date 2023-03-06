@@ -6,7 +6,7 @@ export const userProfileUpdate = async (formData:any) => {
         const {data} = await userApi.patch('/manage',formData)
         return data;
     } catch (error) {
-        console.log(error);
+        return error;
     }
 }
 
@@ -17,7 +17,7 @@ export const accountDisable = async (token:string) => {
         console.log(data);
         return data;
     } catch (error) {
-        console.log(error);
+        return error;
     }
 }
 
@@ -26,7 +26,7 @@ export const accountEnable = async (token:string) => {
         const {data} = await userApi.patch('/enable',{})
         return data;
     } catch (error) {
-        console.log(error);
+        return error;
     }
 }
 
@@ -35,7 +35,7 @@ export const accountDelete = async (password:string,token:string) => {
         const {data} = await userApi.post('/terminate',{'password':password})
         return data
     } catch (error) {
-        console.log(error);
+        return error;
     }
 }
 
@@ -44,7 +44,7 @@ export const integrateAcc = async (formData:any,token:string) => {
         const {data} = await userApi.post('/integrate',formData)
         return data
     } catch (error) {
-        console.log(error);
+        return error;
     }
 }
 
@@ -53,7 +53,7 @@ export const getBankInfo = async (token:string) => {
         const {data} = await userApi.get('/integrate')
         return data;
     } catch (error) {
-        console.log(error);
+        return error;
     }
 }
 
@@ -62,6 +62,6 @@ export const editBankInfos = async (formData:any,token:string) => {
         const {data} = await userApi.patch('/edit-bankInfo',formData,{headers:{'accesstoken':token}})
         return data;
     } catch (error) {
-        console.log(error)
+        return error;
     }
 }

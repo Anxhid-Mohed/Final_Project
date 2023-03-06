@@ -23,6 +23,7 @@ const Chat = () => {
     const [ onlineUsers , setOnlineUsers ] = React.useState<any[]>([])
     const [sendMessage, setSendMessage ] = React.useState()
     const [recieveMessage, setRecieveMessage ] = React.useState()
+    const [isLive , setIsLive ] = React.useState(false)
     const router = useRouter()
     
     console.log("socket connection",socket)
@@ -84,7 +85,7 @@ const Chat = () => {
                 }
             }
         )()
-    },[user])
+    },[user,isLive])
 
     return (  
         <>
@@ -119,7 +120,7 @@ const Chat = () => {
                                         </Box>
                                     </Grid>
                                     <Grid item mt={3} mb={2} xs={8} sx={{borderRadius:'15px',border:'1px solid #dedede',lineBreak:'auto',ml:1}}>
-                                        <ChatBox chat={currentChat} currentUser={user?.userId} setSendMessage={setSendMessage} recieveMessage={recieveMessage}/>
+                                        <ChatBox chat={currentChat} currentUser={user?.userId} setSendMessage={setSendMessage} recieveMessage={recieveMessage} isLive={isLive} setIsLive={setIsLive}/>
                                     </Grid>
                                 </Grid>
                             </Grid>

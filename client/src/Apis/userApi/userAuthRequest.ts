@@ -6,7 +6,7 @@ export const signup = async (formData:any) => {
         const {data} = await userApi.post('/verify-auth',formData);
         return data;
     } catch (error) {
-        console.log(error);   
+        return error 
     }
 }
 
@@ -14,9 +14,8 @@ export const userSignupData = async (formData:any) => {
     try {
         const {data} = await userApi.post('/signup',formData);
         return data;
-
     } catch (error) {
-        
+        return error
     }
 }
 
@@ -25,7 +24,7 @@ export const accountVerification = async (id:string,token:string) => {
         const {data} = await userApi.post(`/verify`,{id,token});
         return data;
     } catch (error) {
-        
+        return error
     }
 }
 
@@ -46,7 +45,7 @@ export const resendEmail = async (userId:string) => {
         const {data} = await userApi.post('/resend',{userId})
         return data;
     } catch (error) {
-        console.log(error)
+        return error
     }
 }
 
@@ -56,6 +55,6 @@ export const tokenVerification = async (token:string) => {
         const {data} = await userApi.post(`/verify-token`,{})
         return data;      
     }catch(error){
-        console.log(error);
+        return error
     }
 }

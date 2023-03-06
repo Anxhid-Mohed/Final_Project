@@ -7,7 +7,7 @@ export const createrRequest = async (category:string,token:string) => {
         const {data} = await userApi.post('/request',{'categories':category},{headers:{'accesstoken':token}});
         return data;
     } catch (error) {
-        console.log(error);  
+        return error  
     }
 }
 
@@ -16,7 +16,7 @@ export const ApprovedDonation = async (info:any,creatorId:any) => {
         const {data} = await userApi.post('/donate',{info,creatorId});
         return data;
     } catch (error) {
-        console.log(error);
+        return error
     }
 }
 
@@ -25,7 +25,7 @@ export const userWallet = async () => {
         const {data} = await userApi.get('/wallet')
         return data;
     } catch (error) {
-        console.log(error)
+        return error
     }
 }
 
@@ -34,6 +34,6 @@ export const notification = async (formData:any) => {
         const {data} = await userApi.post('/notification',formData);
         return data;
     } catch (error) {
-        console.log(error)
+        return error
     }
 }

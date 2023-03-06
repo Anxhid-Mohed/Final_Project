@@ -16,6 +16,7 @@ import { useDispatch ,useSelector} from "react-redux";
 import Donate from "@/components/user/PageComponents/Donate";
 import { notification } from "@/Apis/userApi/userRequests";
 import { userNotification } from "@/redux/notificationSlice";
+import { createChat } from "@/Apis/userApi/userChatRequests";
 
 export const getServerSideProps = async (context:any) => {
     try {
@@ -120,6 +121,17 @@ const userPage = (datas:any) => {
             setIsFollowed(false)
         }
     }
+
+    const handleChat = async () => {
+        try {
+            const response = await createChat(user?.userId,datas?.datas._id)
+            if(response?.status === true){
+                router.push('/chat')
+            }
+        } catch (error) {
+            
+        }
+    }
     
 
     const btnStyle = {fontSize:"1.4em" }
@@ -207,7 +219,9 @@ const userPage = (datas:any) => {
                     }
                     
                     <Box m={0.3}>
-                        <Button sx={{
+                        <Button 
+                        onClick={handleChat}
+                        sx={{
                             backgroundColor:'#f0eded',
                             "&:hover": { backgroundColor: "#f0eded"},
                             textTransform: 'none',

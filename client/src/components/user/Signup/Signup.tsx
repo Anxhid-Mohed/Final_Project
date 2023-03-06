@@ -61,10 +61,8 @@ export default function SignUp() {
         if(userData.password.length >= 8){
           setPassword(false)
           setEmailErr('')
-
-          const response = await signup(userData)
-          console.log(response);
-          
+          try {
+            const response = await signup(userData)
             if(response.status == "success"){
 
               toast.success('Here we go..!', {
@@ -94,8 +92,9 @@ export default function SignUp() {
                 theme: "colored",
               });
             }
-            
-          // })
+          } catch (error) {
+            router.push('/404')
+          }
 
         }else{
           setPassword(true)

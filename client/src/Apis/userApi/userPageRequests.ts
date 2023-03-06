@@ -8,7 +8,7 @@ export const userPages = async (username:string) => {
         const {data} = await userApis.get(`/page?username=${username}`)
         return data;
     } catch (error) {
-        console.log(error);
+        return error;
     }
 }
 
@@ -18,7 +18,7 @@ export const uploadCoverImage = async (img:string,token:string) => {
         console.log(data);
         return data;
     } catch (error) {
-        console.log(error);
+        return error;
     }
 }
 
@@ -36,7 +36,7 @@ export const uploadPost = async (formData:any,token:string) =>{
         const {data} = await userApi.post('/upload-post',formData,{headers:{'accesstoken':token}})
         return data;
     } catch (error) {
-        console.log(error);
+        return error;
     }
 }
 
@@ -46,7 +46,7 @@ export const getUserFeeds = async (username:string,token:string) => {
         const {data} = await userApi.get(`/posts?username=${username}`,{headers:{'accesstoken':token}})
         return data;
     } catch (error) {
-        console.log(error);
+        return error;
     }
 }
 
@@ -65,7 +65,7 @@ export const removePost = async (id:string) => {
         const {data} = await userApi.delete(`/delete-post?id=${id}`)
         return data;
     } catch (error) {
-        console.log(error);
+        return error;
     }
 }
 
@@ -74,7 +74,7 @@ export const editPost = async (id:string,changes:string) => {
         const {data} = await userApi.patch('/edit-post',{'id':id,'changes':changes})
         return data;
     } catch (error) {
-        console.log(error);
+        return error;
     }
 }
 
@@ -119,7 +119,7 @@ export const commentsLikes = async (postId:string,commentId:string,token:string)
         const {data} = await userApi.patch('/comments-likes',{'postId':postId,'commentId':commentId},{headers: {'accesstoken':token}});
         return data;
     } catch (error) {
-        console.log(error);
+        return error;
     }
 }
 
@@ -128,7 +128,7 @@ export const deleteComments = async (commentId:string) => {
         const {data} = await userApi.delete(`/delete-comments?commentId=${commentId}`);
         return data;
     } catch (error) {
-        console.log(error);
+        return error;
     }
 }
 
@@ -137,7 +137,7 @@ export const getAllCreaters = async () => {
         const {data} = await userApi.get('/creaters');
         return data;
     } catch (error) {
-        console.log(error);
+        return error;
     }
 }
 
@@ -146,7 +146,7 @@ export const searchCreaters = async (search:string) => {
         const {data} = await userApi.get(`/search?explore=${search}`)
         return data;
     } catch (error) {
-        console.log(error);
+        return error;
     }
 }
 
@@ -155,7 +155,7 @@ export const getUserData = async (userId:string) => {
         const {data} = await userApi.get(`/user-data?id=${userId}`)
         return data;
     } catch (error) {
-        console.log(error);
+        return error;
     }
 }
 
@@ -165,6 +165,6 @@ export const getPayouts = async (userId:string) => {
         const {data} = await userApi.get(`/payouts?id=${userId}`);
         return data;
     } catch (error) {
-        console.log(error);
+        return error;
     }
 }

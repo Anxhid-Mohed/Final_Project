@@ -7,8 +7,16 @@ import style from '@/styles/Explore.module.css';
 import { format } from 'timeago.js'
 import InputEmoji from 'react-input-emoji'
 
+type Props = {
+    chat:any,
+    currentUser:string,
+    setSendMessage:React.Dispatch<React.SetStateAction<any>>;
+    recieveMessage:any,
+    isLive:Boolean,
+    setIsLive:React.Dispatch<React.SetStateAction<any>>;
+};
 
-const ChatBox = ({chat,currentUser,setSendMessage,recieveMessage}:{chat:any,currentUser:string,setSendMessage:any,recieveMessage:any}) => {
+const ChatBox: React.FC<Props> = ({chat,currentUser,setSendMessage,recieveMessage,isLive,setIsLive}) => {
    
     const [userData, setUserData] = React.useState<any>()
     const [messages , setMessages] = React.useState<any>([])
@@ -64,9 +72,11 @@ const ChatBox = ({chat,currentUser,setSendMessage,recieveMessage}:{chat:any,curr
         //Send message to dataBase
         try {
             const response = await addMessage(message);
-            setMessages([...messages,response?.data])
-            setNewMessages('')
-
+            if(response?.status === true){
+                setMessages([...messages,response?.data])
+                setNewMessages('')
+                setIsLive(!isLive)
+            }
         } catch (error) {
             console.log(error)
         }
