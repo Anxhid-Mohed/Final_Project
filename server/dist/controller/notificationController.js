@@ -12,16 +12,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importDefault(require("mongoose"));
-const connectDb = (DATABASE_URL) => __awaiter(void 0, void 0, void 0, function* () {
-    mongoose_1.default.set("strictQuery", false);
+exports.userNotification = void 0;
+const notificationSchema_1 = __importDefault(require("../model/notificationSchema"));
+const userNotification = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const DB_OPTIONS = { dbName: 'makeaday' };
-        yield mongoose_1.default.connect(DATABASE_URL, DB_OPTIONS);
-        console.log('connected successfully..');
+        const { senderId, receiverId, content } = req.body;
+        if (senderId && receiverId && content) {
+            const doc = new notificationSchema_1.default({
+                senderId,
+                receiverId,
+                content,
+            });
+            yield doc.save();
+            res.status(200).json({ status: true, message: 'success' });
+        }
+        else {
+            res.json({ status: false, message: 'failed' });
+        }
     }
     catch (error) {
-        console.log(error);
+        res.status(500).json({ status: false, message: "Internal Server Error" });
     }
 });
-exports.default = connectDb;
+exports.userNotification = userNotification;

@@ -12,16 +12,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importDefault(require("mongoose"));
-const connectDb = (DATABASE_URL) => __awaiter(void 0, void 0, void 0, function* () {
-    mongoose_1.default.set("strictQuery", false);
-    try {
-        const DB_OPTIONS = { dbName: 'makeaday' };
-        yield mongoose_1.default.connect(DATABASE_URL, DB_OPTIONS);
-        console.log('connected successfully..');
-    }
-    catch (error) {
-        console.log(error);
-    }
+exports.nodemailer = void 0;
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable @typescript-eslint/no-var-requires */
+const verificationToken_1 = __importDefault(require("../model/verificationToken"));
+const crypto_1 = __importDefault(require("crypto"));
+const emailSend_1 = require("./emailSend");
+const nodemailer = (id, email) => __awaiter(void 0, void 0, void 0, function* () {
+    const userToken = yield new verificationToken_1.default({
+        userId: id,
+        token: crypto_1.default.randomBytes(32).toString('hex')
+    }).save();
+    const url = `https://makeaday.rolland.shop/verify?id=${id}&token=${userToken.token}`;
+    (0, emailSend_1.sendMail)(email, 'verify email', url);
 });
-exports.default = connectDb;
+exports.nodemailer = nodemailer;

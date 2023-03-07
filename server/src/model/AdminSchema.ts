@@ -13,4 +13,4 @@ const adminSchema:Schema = new Schema({
     },
 })
 
-export default model("Admins",adminSchema)
+export default model("admins",adminSchema)

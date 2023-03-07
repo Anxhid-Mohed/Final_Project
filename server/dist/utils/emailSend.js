@@ -12,16 +12,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importDefault(require("mongoose"));
-const connectDb = (DATABASE_URL) => __awaiter(void 0, void 0, void 0, function* () {
-    mongoose_1.default.set("strictQuery", false);
+exports.sendMail = void 0;
+const nodemailer_1 = __importDefault(require("nodemailer"));
+const sendMail = (email, subject, text) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const DB_OPTIONS = { dbName: 'makeaday' };
-        yield mongoose_1.default.connect(DATABASE_URL, DB_OPTIONS);
-        console.log('connected successfully..');
+        const smtpTransport = nodemailer_1.default.createTransport({
+            host: process.env.HOST,
+            service: process.env.SERVICE,
+            port: 587,
+            secure: true,
+            auth: {
+                user: process.env.USER_NAME,
+                pass: process.env.PASS,
+            },
+        });
+        yield smtpTransport.sendMail({
+            from: process.env.USER_NAME,
+            to: email,
+            subject: subject,
+            text: text,
+        });
+        console.log("email sent successfully");
     }
     catch (error) {
+        console.log("email not sented");
         console.log(error);
     }
 });
-exports.default = connectDb;
+exports.sendMail = sendMail;

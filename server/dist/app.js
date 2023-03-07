@@ -19,9 +19,12 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const dbconnection_1 = __importDefault(require("./config/dbconnection"));
 const userRouter_1 = __importDefault(require("./routes/user/userRouter"));
+const adminRouter_1 = __importDefault(require("./routes/admin/adminRouter"));
+const chatRouter_1 = __importDefault(require("./routes/user/chatRouter"));
+const messageRouter_1 = __importDefault(require("./routes/user/messageRouter"));
 const cookieParser = require('cookie-parser');
 //variables
-const port = process.env.PORT;
+const port = process.env.PORT || 3001;
 const DATABASE_URL = process.env.DATABASE_URL;
 const app = (0, express_1.default)();
 (() => __awaiter(void 0, void 0, void 0, function* () {
@@ -29,9 +32,9 @@ const app = (0, express_1.default)();
 }))();
 //middlewares
 app.use((0, cors_1.default)({
-    origin: ['http://localhost:3000'],
-    methods: ["GET", "POST"],
-    credentials: true,
+// origin: ['http://localhost:3000'],
+// methods:["GET","POST","PATCH","DELETE"],
+// credentials:true,
 }));
 app.use((0, morgan_1.default)("dev"));
 app.use(express_1.default.urlencoded({ extended: false }));
@@ -40,7 +43,10 @@ app.use(express_1.default.static("public"));
 // app.use(cookieParser());
 app.use(cookieParser());
 //routes
-app.use('/', userRouter_1.default);
+app.use('/api/', userRouter_1.default);
+app.use('/api/admin', adminRouter_1.default);
+app.use('/api/chat', chatRouter_1.default);
+app.use('/api/messages', messageRouter_1.default);
 app.listen(port, () => {
     console.log(`server listening at ${port}`);
 });
