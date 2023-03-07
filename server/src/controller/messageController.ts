@@ -31,3 +31,16 @@ export const getMessages = async (req: Request, res: Response) => {
         res.status(500).json({message:'Internal Server Error'})
     }
 }
+
+export const readMessages = async (req: Request, res: Response) => {
+    try {
+        console.log(req.params)
+        const {chatId,userId} = req.params
+        await messageModel.updateMany({chatId:chatId, senderId:userId},{
+            read:true
+        })
+        res.status(200).json({status:true,message:'success'})
+    } catch (error) {
+        res.status(500).json({message:'Internal Server Error'})
+    }
+}

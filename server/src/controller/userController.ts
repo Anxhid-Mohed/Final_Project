@@ -12,6 +12,7 @@ import donationModel from '../model/donationSchema';
 import reportsModel from '../model/reportsSchema';
 import payoutsModel from '../model/payoutsSchema';
 import cron from 'node-cron'
+import messageModel from '../model/messageSchema';
 
 //---> Authentication-validation <---//
 export const verifyAuth = async(req:Request,res:Response) => {
@@ -709,24 +710,27 @@ export const ApproveDonation = async (req:Request , res:Response) => {
 export const getUserWallet = async (req:Request , res:Response) => {
     try {
         const userId = req.userId
+        console.log(userId)
         const userWallet = await donationModel.findOne({userId:userId}).populate('donators.donorId')
         if(!userWallet){
-            res.json({status:false,message:'user dont have wallet'})
+            res.json({status:false,data:null,message:'user dont have wallet'})
+        }else{
+            res.status(200).json({status:true,data:userWallet,message:'success'})
         }
-        res.status(200).json({status:true,data:userWallet,message:'success'})
     } catch (error) {
+        console.log(error)
         res.status(500).json({status:false,message:'internal server error'})
     }
 }
 
 export const getUserDatas = async (req: Request, res: Response) => {
     try {
-        console.log('0000000000000000000000')
+
         const userId = req.query.id
-        console.log(userId)
+        const chatId = req.query.chatId
         const user = await userModel.findById(userId)
-        console.log(user,"?>>>>>>")
-        res.status(200).json({status:true, data:user,message:'okkkkkk'})
+        const unreadMsgs = await messageModel.find({chatId:chatId,senderId:userId,read:false})
+        res.status(200).json({status:true,data:user,unread:unreadMsgs?.length,message:'okkkkkk'})
     } catch (error) {
         res.status(500).json({status:false,message:'internal server error'})
     }
