@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMessages = exports.addMessage = void 0;
+exports.readMessages = exports.getMessages = exports.addMessage = void 0;
 const chatSchema_1 = __importDefault(require("../model/chatSchema"));
 const messageSchema_1 = __importDefault(require("../model/messageSchema"));
 const addMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -46,3 +46,17 @@ const getMessages = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.getMessages = getMessages;
+const readMessages = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        console.log(req.params);
+        const { chatId, userId } = req.params;
+        yield messageSchema_1.default.updateMany({ chatId: chatId, senderId: userId }, {
+            read: true
+        });
+        res.status(200).json({ status: true, message: 'success' });
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+exports.readMessages = readMessages;

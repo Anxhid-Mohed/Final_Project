@@ -26,6 +26,7 @@ const donationSchema_1 = __importDefault(require("../model/donationSchema"));
 const reportsSchema_1 = __importDefault(require("../model/reportsSchema"));
 const payoutsSchema_1 = __importDefault(require("../model/payoutsSchema"));
 const node_cron_1 = __importDefault(require("node-cron"));
+const messageSchema_1 = __importDefault(require("../model/messageSchema"));
 //---> Authentication-validation <---//
 const verifyAuth = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -759,25 +760,28 @@ exports.ApproveDonation = ApproveDonation;
 const getUserWallet = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userId = req.userId;
+        console.log(userId);
         const userWallet = yield donationSchema_1.default.findOne({ userId: userId }).populate('donators.donorId');
         if (!userWallet) {
-            res.json({ status: false, message: 'user dont have wallet' });
+            res.json({ status: false, data: null, message: 'user dont have wallet' });
         }
-        res.status(200).json({ status: true, data: userWallet, message: 'success' });
+        else {
+            res.status(200).json({ status: true, data: userWallet, message: 'success' });
+        }
     }
     catch (error) {
+        console.log(error);
         res.status(500).json({ status: false, message: 'internal server error' });
     }
 });
 exports.getUserWallet = getUserWallet;
 const getUserDatas = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log('0000000000000000000000');
         const userId = req.query.id;
-        console.log(userId);
+        const chatId = req.query.chatId;
         const user = yield userSchema_1.default.findById(userId);
-        console.log(user, "?>>>>>>");
-        res.status(200).json({ status: true, data: user, message: 'okkkkkk' });
+        const unreadMsgs = yield messageSchema_1.default.find({ chatId: chatId, senderId: userId, read: false });
+        res.status(200).json({ status: true, data: user, unread: unreadMsgs === null || unreadMsgs === void 0 ? void 0 : unreadMsgs.length, message: 'okkkkkk' });
     }
     catch (error) {
         res.status(500).json({ status: false, message: 'internal server error' });

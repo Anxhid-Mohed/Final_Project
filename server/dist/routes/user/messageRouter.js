@@ -8,4 +8,5 @@ const messageController_1 = require("../../controller/messageController");
 const router = express_1.default.Router();
 router.post('/', messageController_1.addMessage);
 router.get('/:chatId', messageController_1.getMessages);
+router.patch('/:chatId/:userId', messageController_1.readMessages);
 exports.default = router;
