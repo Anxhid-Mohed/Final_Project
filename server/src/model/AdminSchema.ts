@@ -10,8 +10,7 @@ const adminSchema:Schema = new Schema({
         type :String,
         require : true,
         trim : true,
-        minlenght :[8]
     },
-},{timestamps:true})
+})
 
 export default model("Admins",adminSchema)
