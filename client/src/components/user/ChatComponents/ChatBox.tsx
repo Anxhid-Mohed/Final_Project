@@ -1,7 +1,7 @@
-import { addMessage, fetchMessages } from "@/Apis/userApi/userChatRequests";
+import { addMessage, fetchMessages, readUserMessages } from "@/Apis/userApi/userChatRequests";
 import { getUserData } from "@/Apis/userApi/userPageRequests";
 import { ListItem, ListItemAvatar, Avatar, ListItemText, Grid, Box, Button } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect ,useRef} from "react";
 import Style from '@/styles/Message.module.css'
 import style from '@/styles/Explore.module.css';
 import { format } from 'timeago.js'
@@ -14,14 +14,17 @@ type Props = {
     recieveMessage:any,
     isLive:Boolean,
     setIsLive:React.Dispatch<React.SetStateAction<any>>;
+    refresh:Boolean,
+    setRefresh:React.Dispatch<React.SetStateAction<any>>;
 };
 
-const ChatBox: React.FC<Props> = ({chat,currentUser,setSendMessage,recieveMessage,isLive,setIsLive}) => {
+const ChatBox: React.FC<Props> = ({chat,currentUser,setSendMessage,recieveMessage,isLive,setIsLive,refresh,setRefresh}) => {
    
     const [userData, setUserData] = React.useState<any>()
     const [messages , setMessages] = React.useState<any>([])
     const [newMessages , setNewMessages] = React.useState<string>("")
-    console.log("The recieve Messages",recieveMessage)
+    const scroll = useRef<any>()
+
     useEffect(()=>{
         if(recieveMessage !== null && recieveMessage?.chatId===chat?._id){
             setMessages([...messages,recieveMessage])
@@ -33,7 +36,7 @@ const ChatBox: React.FC<Props> = ({chat,currentUser,setSendMessage,recieveMessag
         (
             async()=>{
                 const userId = chat?.members.find((id:string)=>id !== currentUser)
-                const response = await getUserData(userId)
+                const response = await getUserData(userId,chat?._id)
                 if(response?.status === true){{
                     setUserData(response.data)
                 }}
@@ -56,6 +59,27 @@ const ChatBox: React.FC<Props> = ({chat,currentUser,setSendMessage,recieveMessag
             }
         )()
     },[chat])
+
+    //Read all users unread messages
+    useEffect(()=>{
+        (
+            async () => {
+                try {
+                    const userId = chat?.members.find((id:string)=>id !== currentUser)
+                    const response = await readUserMessages(chat?._id,userId)
+                    if(response?.status === true){
+                        setRefresh(!refresh)
+                    }
+                } catch (error) {
+                    
+                }
+            }
+        )()
+    },[chat,currentUser])
+
+    useEffect(()=>{
+        scroll.current?.scrollIntoView({behavior:'smooth'})
+    },[])
 
     const handleChange = (newMessages:any) =>{
         setNewMessages(newMessages)
@@ -96,7 +120,7 @@ const ChatBox: React.FC<Props> = ({chat,currentUser,setSendMessage,recieveMessag
                         <ListItemText sx={{lineBreak:'auto'}} primary={userData ? userData.username :'Unknown user'} secondary={'Online'} />
                     </ListItem> 
                 </Grid>
-                <Box className={style.scrollBar} sx={{display:'flex',flexDirection:'column',gap:'0.5rem',p:1.5,overflow:'scroll' ,height:'57vh'}}>
+                <Box ref={scroll} className={style.scrollBar} sx={{display:'flex',flexDirection:'column',gap:'0.5rem',p:1.5,overflow:'scroll' ,height:'57vh'}}>
                     {
                         messages?.map((message:any) =>(
                             <>

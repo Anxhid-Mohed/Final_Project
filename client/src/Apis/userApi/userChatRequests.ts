@@ -39,3 +39,12 @@ export const addMessage = async (formData:any) => {
         return error;
     }
 }
+
+export const readUserMessages = async (chatId:string,userId:string) => {
+    try {
+        const {data} = await userApi.patch(`/messages/${chatId}/${userId}`);
+        return data;
+    } catch (error) {
+        return error;
+    }
+}

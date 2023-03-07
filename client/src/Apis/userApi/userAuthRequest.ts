@@ -52,7 +52,7 @@ export const resendEmail = async (userId:string) => {
 
 export const tokenVerification = async (token:string) => {
     try {
-        const {data} = await userApi.post(`/verify-token`,{})
+        const {data} = await userApi.post(`/verify-token`,{headers:{'accessToken':token}})
         return data;      
     }catch(error){
         return error

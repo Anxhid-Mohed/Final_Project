@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { tokenVerification } from "@/Apis/userApi/userAuthRequest";
-import { userChats } from '@/Apis/userApi/userChatRequests';
+import { readUserMessages, userChats } from '@/Apis/userApi/userChatRequests';
 import Navbar from "@/components/user/NavBar/NavBar";
 import SideBar from "@/components/user/SideBar/SideBar";
 import Style from "@/styles/Explore.module.css";
@@ -24,6 +24,7 @@ const Chat = () => {
     const [sendMessage, setSendMessage ] = React.useState()
     const [recieveMessage, setRecieveMessage ] = React.useState()
     const [isLive , setIsLive ] = React.useState(false)
+    const [refresh, setRefresh] = React.useState(false)
     const router = useRouter()
     
     console.log("socket connection",socket)
@@ -87,6 +88,7 @@ const Chat = () => {
         )()
     },[user,isLive])
 
+
     return (  
         <>
            <Navbar/>
@@ -110,7 +112,7 @@ const Chat = () => {
                                                 data?.map((chat:any)=>{
                                                     return(
                                                     <List onClick={()=>setCurrentChat(chat)} key={chat._id} sx={{borderBottom:'1px solid #d6d6d6'}} >
-                                                        <ChatList chat={chat} currentUser={user?.userId} />
+                                                        <ChatList chat={chat} currentUser={user?.userId} refresh={refresh} />
                                                     </List>
                                                     )
                                                 })
@@ -120,7 +122,7 @@ const Chat = () => {
                                         </Box>
                                     </Grid>
                                     <Grid item mt={3} mb={2} xs={8} sx={{borderRadius:'15px',border:'1px solid #dedede',lineBreak:'auto',ml:1}}>
-                                        <ChatBox chat={currentChat} currentUser={user?.userId} setSendMessage={setSendMessage} recieveMessage={recieveMessage} isLive={isLive} setIsLive={setIsLive}/>
+                                        <ChatBox chat={currentChat} currentUser={user?.userId} setSendMessage={setSendMessage} recieveMessage={recieveMessage} isLive={isLive} setIsLive={setIsLive} refresh={refresh} setRefresh={setRefresh}/>
                                     </Grid>
                                 </Grid>
                             </Grid>

@@ -150,9 +150,10 @@ export const searchCreaters = async (search:string) => {
     }
 }
 
-export const getUserData = async (userId:string) => {
+export const getUserData = async (userId:string,chatId:string) => {
     try {
-        const {data} = await userApi.get(`/user-data?id=${userId}`)
+        console.log(chatId,'===============')
+        const {data} = await userApi.get(`/user-data?id=${userId}&chatId=${chatId}`);
         return data;
     } catch (error) {
         return error;
@@ -161,7 +162,6 @@ export const getUserData = async (userId:string) => {
 
 export const getPayouts = async (userId:string) => {
     try {
-        console.log(userId,'-----')
         const {data} = await userApi.get(`/payouts?id=${userId}`);
         return data;
     } catch (error) {

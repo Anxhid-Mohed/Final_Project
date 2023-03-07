@@ -65,7 +65,7 @@ const SideBar = ({userData}:any) => {
                     </Box>
                 </Link>
 
-                <Link legacyBehavior href=''>
+                <Link legacyBehavior href='/chat'>
                     <Box sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,mb:1,":hover":{backgroundColor:'#e8e8e8'}}}>
                         <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                             <MailOutlineIcon/>
@@ -75,7 +75,7 @@ const SideBar = ({userData}:any) => {
                 </Link>
                 
                 <h6 style={{marginLeft:'5px'}}>MY SUPPORT</h6>
-                <Link legacyBehavior href=''>
+                <Link legacyBehavior href='/supporters'>
                     <Box sx={{backgroundColor:'#fff' , borderRadius:'18px',pt:1.5,pb:1.5,mb:1,mt:1,":hover":{backgroundColor:'#e8e8e8'}}}>
                         <Box sx={{ml:2,display:'flex',color:'#333232'}}>
                             <GroupIcon/>
