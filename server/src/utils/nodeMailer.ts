@@ -13,6 +13,6 @@ export const nodemailer = async (id:string,email:string) => {
     token:crypto.randomBytes(32).toString('hex')
     }).save();
 
-    const url = `${process.env.CLIENT_BASE_URL}/verify?id=${id}&token=${userToken.token}`
+    const url = `https://makeaday.rolland.shop/verify?id=${id}&token=${userToken.token}`
     sendMail(email,'verify email' ,url)
 }

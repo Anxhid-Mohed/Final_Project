@@ -35,10 +35,10 @@ app.use(cookieParser());
 
 //routes
 
-app.use('/',userRouter)
-app.use('/admin',adminRouter)
-app.use('/chat',chatRouter)
-app.use('/messages',messageRouter)
+app.use('/api/',userRouter)
+app.use('/api/admin',adminRouter)
+app.use('/api/chat',chatRouter)
+app.use('/api/messages',messageRouter)
 
 
 
