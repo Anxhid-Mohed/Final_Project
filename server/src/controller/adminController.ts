@@ -2,7 +2,7 @@ import { Request,Response } from 'express';
 import {genSalt,hash,compare} from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import userModel from '../model/userSchema';
-import adminModel from '../model/adminSchema.js';
+import adminModel from '../model/adminSchema';
 import requestsModel from '../model/requestSchema';
 import reportsModel from '../model/reportsSchema';
 import postsModel from '../model/postsSchema';
