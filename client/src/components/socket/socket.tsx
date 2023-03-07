@@ -16,7 +16,7 @@ const Socket = () => {
     const [ntn,setNtn] = React.useState(false)
 
     useEffect(()=>{
-        const socket = io('ws://localhost:8800')
+        const socket = io('wss://api.rolland.shop')
         dispatch(socketDetails(socket))
     },[])
 
