@@ -165,6 +165,3 @@ const Explore = () => {
  
 export default Explore;
 
-function getAllCreators() {
-    throw new Error("Function not implemented.");
-}
